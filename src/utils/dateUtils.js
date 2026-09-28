@@ -114,7 +114,10 @@ export function calculateCountdown(targetDateStr, now = new Date()) {
 }
 
 /**
- * Counts working days (Mon-Fri) remaining before the holiday
+ * Counts working days (Mon-Fri) remaining before the holiday.
+ * Today counts as remaining only if it's before the end of a work shift
+ * (a shift is assumed to end at 6pm local time), so early in the day
+ * today's shift is still included.
  */
 export function countWorkingDays(startDate = new Date(), targetDateStr) {
   if (!targetDateStr) return { workDays: 0, weekendDays: 0 };
@@ -122,9 +125,15 @@ export function countWorkingDays(startDate = new Date(), targetDateStr) {
   const [y, m, d] = targetDateStr.split('-').map(Number);
   const target = new Date(y, m - 1, d);
 
+  const SHIFT_END_HOUR = 18; // a work shift is assumed to end at 6pm local time
+
   let cur = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-  // If starting today and it's already midday, count starts tomorrow or remainder of today
-  cur.setDate(cur.getDate() + 1);
+
+  // Count today only while its shift is still ahead of us;
+  // once it's 6pm or later, start counting from tomorrow
+  if (startDate.getHours() >= SHIFT_END_HOUR) {
+    cur.setDate(cur.getDate() + 1);
+  }
 
   let workDays = 0;
   let weekendDays = 0;

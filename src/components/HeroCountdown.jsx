@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import confetti from 'canvas-confetti';
 import {
-  Calendar as CalendarIcon,
   Share2,
   Briefcase,
   Download,
   Info,
   Clock,
+  Sparkles,
+  PartyPopper,
 } from 'lucide-react';
 import {
   calculateCountdown,
@@ -16,12 +16,15 @@ import {
   isStatForRegion,
 } from '../utils/dateUtils';
 import { getProvinceByCode } from '../data/provinces';
+import { triggerCelebration } from '../utils/celebrations';
 
 export default function HeroCountdown({
   holiday,
   selectedRegion,
   now,
   onOpenDetailModal,
+  celebrationReady = true,
+  onShowMotivation = () => {},
 }) {
   const province = getProvinceByCode(selectedRegion);
 
@@ -41,7 +44,7 @@ export default function HeroCountdown({
   const weekday = formatWeekday(holiday.date);
 
   // Month name for calendar header
-  const [yearNum, monthNum, dayNum] = holiday.date.split('-');
+  const monthNum = holiday.date.split('-')[1];
   const monthNames = [
     'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
     'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER',
@@ -53,26 +56,34 @@ export default function HeroCountdown({
     ? 0
     : Math.max(1, Math.ceil(countdown.totalMs / (1000 * 60 * 60 * 24)));
 
-  // Trigger celebratory confetti if today is the holiday
+  // Screen state for close holidays (within a week: <= 7 days)
+  const isClose = countdown.isToday || daysLater <= 7;
+
+  // Counter used to restart the hero card flash animation on every celebration
+  const [celebrationNonce, setCelebrationNonce] = React.useState(0);
+
+  // Trigger the tiered celebration animation on the main screen hero section.
+  // The effect is chosen by time remaining (see src/utils/celebrations.js):
+  // confetti finale today, fireworks at 1-3 days, rockets at 4-5 days,
+  // shimmer rain within a week, subtle sparkle beyond that.
+  const handleCelebration = React.useCallback(() => {
+    triggerCelebration(daysLater, countdown.isToday);
+    setCelebrationNonce((n) => n + 1);
+  }, [daysLater, countdown.isToday]);
+
+  // When app opens, the first-arrival overlay shows the motivational message;
+  // once it closes (celebrationReady) and it's close (within a week or today),
+  // fire the tiered celebration on the hero screen
   useEffect(() => {
-    if (countdown.isToday) {
-      try {
-        confetti({
-          particleCount: 90,
-          spread: 75,
-          origin: { y: 0.55 },
-          colors: ['#D97706', '#FAF8F5', '#78716C', '#F59E0B'],
-        });
-      } catch (e) {
-        // ignore
-      }
+    if (isClose && celebrationReady) {
+      handleCelebration();
     }
-  }, [countdown.isToday]);
+  }, [holiday.id, isClose, celebrationReady, handleCelebration]);
 
   const handleShare = async () => {
     const text = countdown.isToday
       ? `🎉 Today is ${holiday.name} in ${province.name}! Happy statutory holiday!`
-      : `⏳ ${daysLater} day${daysLater === 1 ? '' : 's'} later is ${holiday.name} (${province.name})! Next day off is coming up!`;
+      : `⏳ Only ${daysLater} day${daysLater === 1 ? '' : 's'} left until ${holiday.name} (${province.name})!`;
 
     if (navigator.share) {
       try {
@@ -136,6 +147,14 @@ export default function HeroCountdown({
       <div className="absolute -top-24 -right-24 w-64 h-64 bg-amber-500/10 dark:bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-stone-500/5 dark:bg-stone-400/5 rounded-full blur-3xl pointer-events-none" />
 
+      {/* Celebration flash ring — remounts via key so it restarts on every celebration */}
+      {celebrationNonce > 0 && (
+        <div
+          key={celebrationNonce}
+          className="absolute inset-0 rounded-3xl pointer-events-none animate-celebrate-flash"
+        />
+      )}
+
       {/* Top minimal status pills */}
       <div className="w-full flex items-center justify-between gap-2 mb-4 text-xs">
         <div className="flex items-center gap-1.5">
@@ -198,7 +217,17 @@ export default function HeroCountdown({
                   {daysLater}
                 </span>
                 <span className="text-sm sm:text-base font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400 mt-2">
-                  {daysLater === 1 ? 'day later' : 'days later'}
+                  {daysLater === 1 ? 'day left' : 'days left'}
+                </span>
+              </div>
+            )}
+
+            {/* Remaining shifts — inside the calendar frame (consistent with the overlay) */}
+            {!countdown.isToday && (
+              <div className="mt-3 text-[11px] text-stone-400 dark:text-stone-500 flex items-center gap-1">
+                <Briefcase className="w-3 h-3 text-stone-400" />
+                <span>
+                  <strong className="text-stone-600 dark:text-stone-300">{workDays} working shifts</strong> remaining {weekendDays > 0 ? `(+${weekendDays} weekend days)` : ''}
                 </span>
               </div>
             )}
@@ -212,7 +241,7 @@ export default function HeroCountdown({
       </div>
 
       {/* Target Holiday Name & Date */}
-      <div className="mt-4 mb-3 max-w-md">
+      <div className="mt-4 mb-2 max-w-md">
         <h1 className="text-xl sm:text-2xl font-black tracking-tight text-stone-900 dark:text-stone-100 font-sans">
           {holiday.name}
         </h1>
@@ -221,9 +250,23 @@ export default function HeroCountdown({
         </p>
       </div>
 
-      {/* Small Prints: Refined Exact Wait & Workday Estimate */}
-      <div className="flex flex-col items-center gap-1.5 my-2">
-        {/* Exact Wait Time in Small Print */}
+      {/* Motivational message opener — re-shows the arrival overlay, then celebrates on close */}
+      <div className="my-2.5 max-w-sm w-full">
+        <button
+          onClick={onShowMotivation}
+          type="button"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border transition-all active:scale-[0.98] cursor-pointer bg-amber-500/10 hover:bg-amber-500/15 dark:bg-amber-400/10 dark:hover:bg-amber-400/15 border-amber-500/20 dark:border-amber-400/20 shadow-xs"
+          title="Show motivational message"
+        >
+          <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+          <span className="text-xs sm:text-[13px] font-semibold text-amber-950 dark:text-amber-200 tracking-tight">
+            Show motivational message
+          </span>
+        </button>
+      </div>
+
+      {/* Exact wait — kept outside the calendar frame to avoid crowding it */}
+      <div className="flex justify-center my-2">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-100 dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 text-[11px] text-stone-500 dark:text-stone-400 tabular-numbers">
           <Clock className="w-3 h-3 text-stone-400 shrink-0" />
           <span>Exact wait:</span>
@@ -231,46 +274,48 @@ export default function HeroCountdown({
             {countdown.days}d {String(countdown.hours).padStart(2, '0')}h {String(countdown.minutes).padStart(2, '0')}m {String(countdown.seconds).padStart(2, '0')}s
           </span>
         </div>
-
-        {/* Work shifts in small print */}
-        {!countdown.isToday && (
-          <div className="text-[11px] text-stone-400 dark:text-stone-500 flex items-center gap-1">
-            <Briefcase className="w-3 h-3 text-stone-400" />
-            <span>
-              <strong className="text-stone-600 dark:text-stone-300">{workDays} working shifts</strong> remaining {weekendDays > 0 ? `(+${weekendDays} weekend days)` : ''}
-            </span>
-          </div>
-        )}
       </div>
 
       {/* Minimal Action Buttons Bar */}
-      <div className="w-full grid grid-cols-3 gap-2 pt-3 mt-3 border-t border-stone-100 dark:border-stone-800/80">
+      <div className={`w-full grid ${isClose ? 'grid-cols-4' : 'grid-cols-3'} gap-2 pt-3 mt-3 border-t border-stone-100 dark:border-stone-800/80`}>
         <button
           onClick={handleShare}
-          className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 hover:bg-stone-200/80 dark:hover:bg-stone-700 transition active:scale-95"
+          className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 hover:bg-stone-200/80 dark:hover:bg-stone-700 transition active:scale-95"
           title="Share countdown"
         >
-          <Share2 className="w-3.5 h-3.5" />
-          <span>Share</span>
+          <Share2 className="w-3.5 h-3.5 shrink-0" />
+          <span className="truncate">Share</span>
         </button>
 
         <button
           onClick={handleDownloadICS}
-          className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 hover:bg-stone-200/80 dark:hover:bg-stone-700 transition active:scale-95"
+          className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 hover:bg-stone-200/80 dark:hover:bg-stone-700 transition active:scale-95"
           title="Add to calendar"
         >
-          <Download className="w-3.5 h-3.5" />
-          <span>Calendar</span>
+          <Download className="w-3.5 h-3.5 shrink-0" />
+          <span className="truncate">Calendar</span>
         </button>
 
         <button
           onClick={() => onOpenDetailModal(holiday)}
-          className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 hover:bg-stone-200/80 dark:hover:bg-stone-700 transition active:scale-95"
+          className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 hover:bg-stone-200/80 dark:hover:bg-stone-700 transition active:scale-95"
           title="Holiday details"
         >
-          <Info className="w-3.5 h-3.5" />
-          <span>Details</span>
+          <Info className="w-3.5 h-3.5 shrink-0" />
+          <span className="truncate">Details</span>
         </button>
+
+        {/* Re-trigger Celebration Action Bar Button */}
+        {isClose && (
+          <button
+            onClick={handleCelebration}
+            className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-900 dark:text-amber-200 border border-amber-500/30 transition active:scale-95 cursor-pointer shadow-xs"
+            title="Re-trigger celebration"
+          >
+            <PartyPopper className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 animate-bounce" />
+            <span className="truncate">Celebrate</span>
+          </button>
+        )}
       </div>
     </section>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, ChevronRight, ArrowLeft } from 'lucide-react';
+import { ChevronRight, ArrowLeft } from 'lucide-react';
 import {
   formatMediumDate,
   formatWeekday,
@@ -15,17 +15,29 @@ export default function HolidayList({
   onSelectHoliday,
   onBackToCountdown,
 }) {
-  const [filterYear, setFilterYear] = useState('all');
   const province = getProvinceByCode(selectedRegion);
   const todayStr = getLocalDateString(now);
 
-  const availableYears = Array.from(
-    new Set(holidays.map((h) => h.date.substring(0, 4)))
-  ).sort();
+  // Year filter pills derive from the clock — never hardcoded — so they roll
+  // over automatically: current year, next year, then "All".
+  const currentYear = String(now.getFullYear());
+  const nextYear = String(now.getFullYear() + 1);
+  const availableYears = [currentYear, nextYear];
+
+  // Default to the current year (what's left this year); fall back to next
+  // year when the current year has no upcoming holidays left (late December).
+  const [filterYear, setFilterYear] = useState(() =>
+    holidays.some((h) => h.date.startsWith(currentYear)) ? currentYear : nextYear
+  );
+
+  // If a session crosses New Year, the stored year can fall out of the pill
+  // set — fall back to the fresh current year so the filter never goes stale.
+  const effectiveYear =
+    filterYear === 'all' || availableYears.includes(filterYear) ? filterYear : currentYear;
 
   const filteredHolidays = holidays.filter((h) => {
-    if (filterYear === 'all') return true;
-    return h.date.startsWith(filterYear);
+    if (effectiveYear === 'all') return true;
+    return h.date.startsWith(effectiveYear);
   });
 
   function getDaysRemaining(targetDateStr) {
@@ -42,7 +54,8 @@ export default function HolidayList({
   return (
     <section className="w-full rounded-3xl bg-white dark:bg-[#18181B] border border-stone-200/90 dark:border-stone-800 shadow-card dark:shadow-card-dark p-4 sm:p-6 transition-all">
       {/* Top Header of the Upcoming Holidays view */}
-      <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-stone-100 dark:border-stone-800">
+      <div className="pb-3 mb-3 border-b border-stone-100 dark:border-stone-800 space-y-2">
+        {/* Row 1: back + title */}
         <div className="flex items-center gap-2">
           <button
             onClick={onBackToCountdown}
@@ -52,34 +65,22 @@ export default function HolidayList({
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Countdown</span>
           </button>
-          <div>
-            <h2 className="text-sm sm:text-base font-bold text-stone-900 dark:text-stone-100 flex items-center gap-1.5">
-              <span>Upcoming Holidays</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 font-mono">
-                {filteredHolidays.length}
-              </span>
-            </h2>
-          </div>
+          <h2 className="text-sm sm:text-base font-bold text-stone-900 dark:text-stone-100 flex items-center gap-1.5">
+            <span>Upcoming Holidays</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 font-mono">
+              {filteredHolidays.length}
+            </span>
+          </h2>
         </div>
 
-        {/* Year Filter Pills */}
-        <div className="flex items-center gap-1 bg-stone-100 dark:bg-stone-800/80 p-0.5 rounded-xl border border-stone-200/60 dark:border-stone-700/60 text-xs">
-          <button
-            onClick={() => setFilterYear('all')}
-            className={`px-2 py-0.5 rounded-lg text-xs font-semibold transition ${
-              filterYear === 'all'
-                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
-                : 'text-stone-400 dark:text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
-            }`}
-          >
-            All
-          </button>
+        {/* Row 2: Year Filter Pills — current year first, then next year, "All" last */}
+        <div className="flex items-center gap-1 bg-stone-100 dark:bg-stone-800/80 p-0.5 rounded-xl border border-stone-200/60 dark:border-stone-700/60">
           {availableYears.map((yr) => (
             <button
               key={yr}
               onClick={() => setFilterYear(yr)}
-              className={`px-2 py-0.5 rounded-lg text-xs font-semibold transition ${
-                filterYear === yr
+              className={`flex-1 px-2 py-1 rounded-lg text-xs font-semibold transition ${
+                effectiveYear === yr
                   ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
                   : 'text-stone-400 dark:text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
               }`}
@@ -87,6 +88,16 @@ export default function HolidayList({
               {yr}
             </button>
           ))}
+          <button
+            onClick={() => setFilterYear('all')}
+            className={`flex-1 px-2 py-1 rounded-lg text-xs font-semibold transition ${
+              effectiveYear === 'all'
+                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
+                : 'text-stone-400 dark:text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
+            }`}
+          >
+            All
+          </button>
         </div>
       </div>
 

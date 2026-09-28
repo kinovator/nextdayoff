@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Header from './components/Header';
 import HeroCountdown from './components/HeroCountdown';
 import HolidayList from './components/HolidayList';
@@ -6,6 +6,7 @@ import RegionSelector from './components/RegionSelector';
 import HolidayDetailModal from './components/HolidayDetailModal';
 import InstallBanner from './components/InstallBanner';
 import InfoModal from './components/InfoModal';
+import MotivationOverlay from './components/MotivationOverlay';
 
 import { PROVINCES, getProvinceByCode, DEFAULT_PROVINCE_CODE } from './data/provinces';
 import { getNextHoliday, getUpcomingHolidays } from './utils/dateUtils';
@@ -33,6 +34,11 @@ export default function App() {
   const [selectedHolidayForModal, setSelectedHolidayForModal] = useState(null);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [locationFeedback, setLocationFeedback] = useState('');
+
+  // First-arrival motivational overlay (auto-closes, see MotivationOverlay)
+  const [isWelcomeOpen, setIsWelcomeOpen] = useState(true);
+  const handleCloseWelcome = useCallback(() => setIsWelcomeOpen(false), []);
+  const handleShowMotivation = useCallback(() => setIsWelcomeOpen(true), []);
 
   // Horizontal swipe detection on the content container
   const touchStartX = useRef(null);
@@ -193,48 +199,49 @@ export default function App() {
             </button>
           </div>
 
-          {/* Segmented View Switcher & Swipe Hint */}
+          {/* Segmented View Switcher & Swipe Dots */}
           <div className="flex items-center justify-between gap-2 mb-3 px-0.5">
-            <div className="inline-flex p-0.5 bg-stone-200/70 dark:bg-stone-800/80 rounded-2xl border border-stone-300/40 dark:border-stone-700/50 text-xs">
-              <button
-                onClick={() => setActiveTab('countdown')}
-                className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
-                  activeTab === 'countdown'
-                    ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
-                    : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
-                }`}
-              >
-                ⏱ Next Day Off
-              </button>
-              <button
-                onClick={() => setActiveTab('upcoming')}
-                className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
-                  activeTab === 'upcoming'
-                    ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
-                    : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
-                }`}
-              >
-                📅 Upcoming ({upcomingHolidays.length})
-              </button>
+            <div className="flex-1 min-w-0">
+              <div className="inline-flex p-0.5 bg-stone-200/70 dark:bg-stone-800/80 rounded-2xl border border-stone-300/40 dark:border-stone-700/50 text-xs">
+                <button
+                  onClick={() => setActiveTab('countdown')}
+                  className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
+                    activeTab === 'countdown'
+                      ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
+                      : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
+                  }`}
+                >
+                  ⏱ Countdown
+                </button>
+                <button
+                  onClick={() => setActiveTab('upcoming')}
+                  className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
+                    activeTab === 'upcoming'
+                      ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
+                      : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
+                  }`}
+                >
+                  📅 Upcoming
+                </button>
+              </div>
             </div>
 
-            {/* Pagination Dots indicator */}
-            <div className="flex items-center gap-1.5 text-stone-400 dark:text-stone-500 text-[11px]">
-              <span className="hidden sm:inline">Swipe</span>
+            {/* Pagination Dots */}
+            <div className="flex items-center gap-1.5 shrink-0">
               <span
                 onClick={() => setActiveTab('countdown')}
-                className={`w-2 h-2 rounded-full cursor-pointer transition-all ${
+                className={`h-2 rounded-full cursor-pointer transition-all ${
                   activeTab === 'countdown'
                     ? 'bg-amber-500 w-4'
-                    : 'bg-stone-300 dark:bg-stone-700'
+                    : 'bg-stone-300 dark:bg-stone-700 w-2'
                 }`}
               />
               <span
                 onClick={() => setActiveTab('upcoming')}
-                className={`w-2 h-2 rounded-full cursor-pointer transition-all ${
+                className={`h-2 rounded-full cursor-pointer transition-all ${
                   activeTab === 'upcoming'
                     ? 'bg-amber-500 w-4'
-                    : 'bg-stone-300 dark:bg-stone-700'
+                    : 'bg-stone-300 dark:bg-stone-700 w-2'
                 }`}
               />
             </div>
@@ -259,6 +266,8 @@ export default function App() {
                   holiday={nextHoliday}
                   selectedRegion={selectedRegion}
                   now={now}
+                  celebrationReady={!isWelcomeOpen || !nextHoliday}
+                  onShowMotivation={handleShowMotivation}
                   onOpenDetailModal={(h) => setSelectedHolidayForModal(h)}
                 />
                 <InstallBanner />
@@ -289,6 +298,14 @@ export default function App() {
           </p>
         </footer>
       </main>
+
+      {/* First-arrival motivational overlay (auto-closes; celebration fires after) */}
+      <MotivationOverlay
+        holiday={nextHoliday}
+        now={now}
+        isOpen={isWelcomeOpen && Boolean(nextHoliday)}
+        onClose={handleCloseWelcome}
+      />
 
       {/* Region Picker Modal */}
       <RegionSelector
