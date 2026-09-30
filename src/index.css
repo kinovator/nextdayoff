@@ -64,6 +64,17 @@ html {
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* Hide scrollbars on horizontal chip rows while keeping them scrollable
+   (used by the quick region selector bar) */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 @keyframes popIn {
   0% {
     opacity: 0;

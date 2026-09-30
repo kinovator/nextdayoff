@@ -7,7 +7,7 @@
 - **Live Countdown Ticker:** Real-time ticker counting down Days, Hours, Minutes, and Seconds to your next statutory holiday.
 - **Location Aware:** One-tap GPS auto-detection with automatic fallback to system timezones (e.g. `America/Vancouver`, `America/Toronto`, `America/New_York`, `America/Chicago`, etc.).
 - **Jurisdiction Coverage:** Canada — all 10 provinces, 3 territories, and the Federal jurisdiction (banks, airlines, telecom, federal public service). United States — all 50 states, DC, and federal holidays.
-- **Country Switcher:** Quick country tabs plus region quick-switch chips in the region picker; the header badge always reflects the active country.
+- **Country Switcher:** Quick country tabs plus region quick-switch chips in the region picker; the header badge always reflects the active country (flag + code on phone widths, full country name from 640px up, matching the quick region chip bar that appears at the same breakpoint).
 - **Working-Days Estimator:** Computes remaining Monday-to-Friday work shifts before the holiday, accounting for weekends and including today's shift until 6pm local time.
 - **Upcoming Holidays Dashboard:** Filterable chronological list of holidays with year filters ordered current year, next year, then All — highlighting mandatory statutory holidays vs. optional civic holidays.
 - **Observance Matrix:** Tap any holiday to see statutory rules and holiday status across every region in the selected country.

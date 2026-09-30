@@ -11,5 +11,7 @@ Instruct the coding agent to bootstrap the project using a high-performance mode
 
 ## Architectural Constraints & UX Guidelines
 - **Mobile-First Paradigm:** Design all interactive elements with a strict mobile viewport focus. Ensure touch targets maintain a minimum dimension of 48x48 pixels.
+- **Header Budget (no horizontal scroll):** The sticky header must fit every phone viewport from 320px up without a horizontal scrollbar. On phones the country badge collapses to flag + code, the brand wordmark truncates (`min-w-0` + `truncate`) before any action button is squeezed, and the Countdown/Upcoming header toggle is hidden — the in-page segmented switcher and swipe gesture already cover it, leaving the region, theme, and info buttons reachable.
+- **Location Shortcuts:** The quick region chip bar (`App.jsx`) renders from the `sm` breakpoint (640px) up, where the five chips plus the "All N+" link fit on one line. On phones, location switching goes through the header location button, which opens the same `RegionSelector` picker.
 - **Safe-Area Compliance:** Implement dynamic CSS safe-area padding (`env(safe-area-inset-bottom)`) on fixed containers to prevent UI obstruction from mobile hardware gesture bars.
 - **State Resilience:** Ensure that changing regions instantly recalculates the chronological countdown vector without requiring a full page refresh.

@@ -257,8 +257,10 @@ export default function App() {
             onEnable={handleToggleReminders}
           />
 
-          {/* Quick Region Selector Bar */}
-          <div className="flex items-center justify-between gap-1.5 mb-3 overflow-x-auto pb-1 scrollbar-none">
+          {/* Quick Region Selector Bar — shown from sm up. On phones the five
+              chips plus "All N+" cannot fit, so location switching happens via
+              the header location button (which opens this same picker) */}
+          <div className="hidden sm:flex items-center justify-between gap-1.5 mb-3 overflow-x-auto pb-1 scrollbar-none">
             <div className="flex items-center gap-1.5">
               {quickChips.map((code) => {
                 const p = getRegionByCode(code);
