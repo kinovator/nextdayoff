@@ -11,7 +11,7 @@
 - **Working-Days Estimator:** Computes remaining Monday-to-Friday work shifts before the holiday, accounting for weekends and including today's shift until 6pm local time.
 - **Upcoming Holidays Dashboard:** Filterable chronological list of holidays with year filters ordered current year, next year, then All — highlighting mandatory statutory holidays vs. optional civic holidays.
 - **Observance Matrix:** Tap any holiday to see statutory rules and holiday status across every region in the selected country.
-- **Weekend-Aware Dates:** Holiday `date` values hold the observed day off (Sat → preceding Fri, Sun → following Mon, collision-safe), so countdowns always target a real day off.
+- **Weekend-Aware Dates:** Holiday `date` values hold the observed day off (Sat → preceding Fri, Sun → following Mon, collision-safe), so countdowns always target a real day off. Shifted holidays also carry an `actualDate`, shown as an "Actual date" note in the holiday detail modal.
 - **Sharing Integration:** Native Web Share integration for one-tap sharing of countdowns and holidays.
 - **PWA & Offline Ready:** Configured with `vite-plugin-pwa` and Service Worker asset precaching for full offline functionality.
 - **Install Prompt:** Customized install instructions for both iOS (Safari) and Android / Chromium browsers.

@@ -27,6 +27,17 @@ export function isOptionalForRegion(holiday, regionCode) {
 }
 
 /**
+ * Returns the literal calendar date for holidays whose stored `date` is the
+ * observed day off (see docs/DATA_SCHEMA.md §3 Observance Convention).
+ * Returns null when the holiday is not shifted, so callers can simply skip
+ * rendering the note.
+ */
+export function getActualDate(holiday) {
+  if (!holiday || !holiday.actualDate) return null;
+  return holiday.actualDate !== holiday.date ? holiday.actualDate : null;
+}
+
+/**
  * Checks if a holiday qualifies for the user's region and filter preferences
  */
 export function holidayAppliesToRegion(holiday, regionCode, includeOptional = false) {

@@ -5,9 +5,9 @@
  * (current year + next year — matching the app's year-filter model).
  *
  * Observance: when a holiday falls on a weekend, federal employees observe
- * the adjacent weekday — `date` holds the OBSERVED day off, and the
- * `description` notes the original calendar date. (`date` is what the
- * countdown targets, so it must be the actual day off.)
+ * the adjacent weekday — `date` holds the OBSERVED day off and `actualDate`
+ * holds the literal calendar date so the UI can explain the shift. (`date`
+ * is what the countdown targets, so it must be the actual day off.)
  *
  * All federal holidays apply nationwide, so every entry spans ALL_US_REGIONS.
  * State-specific additions can be layered in later via `regions` subsetting.
@@ -83,10 +83,11 @@ export const US_HOLIDAYS = [
     id: 'us-independence-day-2026',
     name: 'Independence Day',
     date: '2026-07-03',
+    actualDate: '2026-07-04',
     regions: [...ALL_US_REGIONS],
     optionalRegions: [],
     type: 'stat',
-    description: 'Federal holiday celebrating the Declaration of Independence (July 4, 1776). July 4, 2026 falls on a Saturday, so it is observed on Friday, July 3.',
+    description: 'Federal holiday celebrating the Declaration of Independence (July 4, 1776).',
     longWeekend: true,
     category: 'national',
   },
@@ -195,10 +196,11 @@ export const US_HOLIDAYS = [
     id: 'us-juneteenth-2027',
     name: 'Juneteenth National Independence Day',
     date: '2027-06-18',
+    actualDate: '2027-06-19',
     regions: [...ALL_US_REGIONS],
     optionalRegions: [],
     type: 'stat',
-    description: 'Federal holiday commemorating the end of slavery in the United States (June 19, 1865). June 19, 2027 falls on a Saturday, so it is observed on Friday, June 18.',
+    description: 'Federal holiday commemorating the end of slavery in the United States (June 19, 1865).',
     longWeekend: true,
     category: 'national',
   },
@@ -206,10 +208,11 @@ export const US_HOLIDAYS = [
     id: 'us-independence-day-2027',
     name: 'Independence Day',
     date: '2027-07-05',
+    actualDate: '2027-07-04',
     regions: [...ALL_US_REGIONS],
     optionalRegions: [],
     type: 'stat',
-    description: 'Federal holiday celebrating the Declaration of Independence (July 4, 1776). July 4, 2027 falls on a Sunday, so it is observed on Monday, July 5.',
+    description: 'Federal holiday celebrating the Declaration of Independence (July 4, 1776).',
     longWeekend: true,
     category: 'national',
   },
@@ -261,10 +264,11 @@ export const US_HOLIDAYS = [
     id: 'us-christmas-2027',
     name: 'Christmas Day',
     date: '2027-12-24',
+    actualDate: '2027-12-25',
     regions: [...ALL_US_REGIONS],
     optionalRegions: [],
     type: 'stat',
-    description: 'Federal holiday celebrating Christmas Day. December 25, 2027 falls on a Saturday, so it is observed on Friday, December 24.',
+    description: 'Federal holiday celebrating Christmas Day.',
     longWeekend: true,
     category: 'national',
   },

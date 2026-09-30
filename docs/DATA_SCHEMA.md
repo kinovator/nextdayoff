@@ -31,6 +31,7 @@ Every holiday entry processed by the countdown engine must comply with a strict 
   - `id`: Unique string slug combining country, holiday name, and year (e.g., `ca-family-day-2026`, `us-thanksgiving-2026`).
   - `name`: Official legal name of the statutory holiday.
   - `date`: Standard ISO-8601 date string formatted strictly as `YYYY-MM-DD`. Per the observance convention below, this holds the **observed** day off.
+  - `actualDate`: Optional ISO-8601 date string holding the literal calendar date. Present **only** on holidays that were shifted for weekend observance, so the UI can explain the difference between the actual date and the observed day off. Omit it entirely for non-shifted holidays.
   - `regions`: Array of applicable two-letter region codes where the holiday is legally mandated as a statutory day off.
   - `optionalRegions`: Array of region codes where the holiday is observed but not statutorily mandated; rendered as optional/civic when the user enables optional holidays.
   - `type`: Enumerated string value (`stat` for mandatory statutory holidays, `optional` for civic or non-statutory holidays).
@@ -47,7 +48,7 @@ Holiday `date` values hold the **observed** day off rather than the literal cale
 - Sunday holiday → following Monday.
 - If the shifted date would collide with another holiday already on that date (e.g., Christmas Friday vs. Boxing Day Saturday in Ontario), the next free weekday is used instead.
 
-The literal calendar date is preserved in the entry's `description` text. Surfacing it as a dedicated field/note in the holiday detail modal is planned follow-up work.
+The literal calendar date is stored in the optional `actualDate` field on shifted entries only, and is surfaced as an "Actual date" note in the holiday detail modal. `getActualDate(holiday)` in `src/utils/dateUtils.js` returns the actual date when a shift exists and `null` otherwise, so callers can skip rendering the note.
 
 ## 4. Storage Schema (`localStorage`)
 The application state persistence layer relies on lightweight client-side storage keys (see `src/utils/storage.js`):

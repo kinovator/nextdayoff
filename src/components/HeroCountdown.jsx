@@ -187,11 +187,16 @@ export default function HeroCountdown({
 
             {/* Remaining shifts — inside the calendar frame (consistent with the overlay) */}
             {!countdown.isToday && (
-              <div className="mt-3 text-[11px] text-stone-400 dark:text-stone-500 flex items-center gap-1">
-                <Briefcase className="w-3 h-3 text-stone-400" />
-                <span>
-                  <strong className="text-stone-600 dark:text-stone-300">{workDays} working shifts</strong> remaining {weekendDays > 0 ? `(+${weekendDays} weekend days)` : ''}
-                </span>
+              <div className="mt-3 text-[11px] text-stone-400 dark:text-stone-500 flex items-start gap-1">
+                <Briefcase className="w-3 h-3 text-stone-400 mt-0.5 shrink-0" />
+                <div className="leading-snug">
+                  <span>
+                    <strong className="text-stone-600 dark:text-stone-300">{workDays} working shifts</strong> remaining
+                  </span>
+                  {weekendDays > 0 && (
+                    <div>(+{weekendDays} weekend days)</div>
+                  )}
+                </div>
               </div>
             )}
           </div>

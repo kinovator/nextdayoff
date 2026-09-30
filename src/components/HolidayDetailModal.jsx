@@ -1,8 +1,9 @@
-import { X, Calendar, Share2 } from 'lucide-react';
+import { X, Calendar, Share2, Info } from 'lucide-react';
 import { REGIONS, getRegionByCode, getCountryForRegion } from '../data/regions';
 import {
   formatLongDate,
   formatWeekday,
+  getActualDate,
   isStatForRegion,
   isOptionalForRegion,
 } from '../utils/dateUtils';
@@ -19,6 +20,7 @@ export default function HolidayDetailModal({
   const currentCountry = getCountryForRegion(selectedRegion);
   const isMandatoryHere = isStatForRegion(holiday, selectedRegion);
   const isOptionalHere = isOptionalForRegion(holiday, selectedRegion);
+  const actualDate = getActualDate(holiday);
 
   const handleShare = async () => {
     const text = `${currentCountry.flag} ${holiday.name} is on ${formatLongDate(holiday.date)}! Check statutory holiday rules and countdown on NextDayOff.`;
@@ -82,6 +84,17 @@ export default function HolidayDetailModal({
                 {formatWeekday(holiday.date)}
               </span>
             </div>
+
+            {/* Observed vs. actual date note (weekend-shifted holidays only) */}
+            {actualDate && (
+              <div className="mt-2 flex items-start gap-1.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-100/80 dark:bg-stone-800/60 px-2.5 py-1.5 text-[11px] leading-snug text-stone-600 dark:text-stone-400">
+                <Info className="w-3.5 h-3.5 mt-px shrink-0 text-amber-600 dark:text-amber-400" />
+                <span>
+                  Actual date: <strong className="font-semibold text-stone-700 dark:text-stone-300">{formatWeekday(actualDate)}, {formatLongDate(actualDate)}</strong>
+                  {' — '}observed as the day off on {formatWeekday(holiday.date)}.
+                </span>
+              </div>
+            )}
           </div>
 
           <button

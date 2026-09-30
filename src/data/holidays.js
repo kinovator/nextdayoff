@@ -5,7 +5,8 @@
  * Observance convention (both countries): when a holiday falls on a weekend,
  * `date` holds the OBSERVED day off (Sat -> preceding Fri, Sun -> following
  * Mon; skipped when it would collide with another holiday on that date).
- * Actual calendar dates can be surfaced later as a note.
+ * `actualDate` carries the literal calendar date for shifted holidays so the
+ * UI can explain the difference.
  * Complies with docs/DATA_SCHEMA.md
  */
 import { US_HOLIDAYS } from './holidaysUS';
@@ -308,6 +309,7 @@ export const HOLIDAYS = [
     id: 'ca-indigenous-peoples-2026',
     name: 'National Indigenous Peoples Day',
     date: '2026-06-22',
+    actualDate: '2026-06-21',
     regions: ['NT', 'YT'],
     optionalRegions: ['FED', 'BC'],
     type: 'stat',
@@ -429,6 +431,7 @@ export const HOLIDAYS = [
     id: 'ca-boxing-day-2026',
     name: 'Boxing Day',
     date: '2026-12-28',
+    actualDate: '2026-12-26',
     regions: ['ON', 'FED'],
     optionalRegions: ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'PE', 'QC', 'SK', 'YT'],
     type: 'stat',
@@ -618,6 +621,7 @@ export const HOLIDAYS = [
     id: 'ca-christmas-2027',
     name: 'Christmas Day',
     date: '2027-12-24',
+    actualDate: '2027-12-25',
     regions: [...ALL_CANADIAN_REGIONS],
     optionalRegions: [],
     type: 'stat',
@@ -629,6 +633,7 @@ export const HOLIDAYS = [
     id: 'ca-boxing-day-2027',
     name: 'Boxing Day',
     date: '2027-12-27',
+    actualDate: '2027-12-26',
     regions: ['ON', 'FED'],
     optionalRegions: ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'PE', 'QC', 'SK', 'YT'],
     type: 'stat',
