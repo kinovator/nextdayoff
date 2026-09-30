@@ -1,5 +1,4 @@
-import React from 'react';
-import { X, ExternalLink, HelpCircle, ShieldCheck, Heart } from 'lucide-react';
+import { X, ShieldCheck } from 'lucide-react';
 
 export default function InfoModal({ isOpen, onClose }) {
   if (!isOpen) return null;
@@ -12,7 +11,7 @@ export default function InfoModal({ isOpen, onClose }) {
       >
         <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🍁</span>
+            <span className="text-xl">🌍</span>
             <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100">
               About Statutory Holidays
             </h2>
@@ -29,10 +28,10 @@ export default function InfoModal({ isOpen, onClose }) {
           <section className="space-y-2">
             <h3 className="font-bold text-stone-900 dark:text-stone-100 text-sm flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-              <span>How Stat Holidays Work in Canada</span>
+              <span>How Stat Holidays Work</span>
             </h3>
             <p className="leading-relaxed">
-              In Canada, public and statutory holidays are designated under provincial, territorial, or federal employment standards legislation.
+              Public and statutory holidays are designated by federal, state, provincial, or territorial employment standards legislation, depending on the jurisdiction.
             </p>
             <p className="leading-relaxed">
               When a holiday is statutory in your jurisdiction, eligible workers have a legal right to take the day off with regular statutory holiday pay.
@@ -41,13 +40,12 @@ export default function InfoModal({ isOpen, onClose }) {
 
           <section className="p-3.5 rounded-2xl bg-stone-100 dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 space-y-2">
             <h4 className="font-semibold text-stone-900 dark:text-stone-100 text-xs uppercase tracking-wide">
-              Key Rules by Province
+              Good to Know
             </h4>
             <ul className="space-y-1.5 text-xs text-stone-600 dark:text-stone-400 list-disc list-inside">
-              <li><strong>BC & SK:</strong> 10 standard statutory holidays.</li>
-              <li><strong>Ontario:</strong> 9 standard statutory holidays (Boxing Day is stat, but Remembrance Day is not).</li>
-              <li><strong>Quebec:</strong> 8 statutory holidays under the Act Respecting Labour Standards.</li>
-              <li><strong>Federal:</strong> Applies to federally regulated workers (e.g., banks, airlines, rail, telecommunications, Canada Post).</li>
+              <li><strong>Jurisdiction matters:</strong> Statutory holiday lists differ by country, state, province, and territory.</li>
+              <li><strong>Optional holidays:</strong> Some employers offer civic holidays (e.g. Easter Monday) that aren't mandatory stat days.</li>
+              <li><strong>Federal jurisdictions:</strong> Federal employees (banks, airlines, telecom, public service) often follow their own holiday schedule.</li>
             </ul>
           </section>
 

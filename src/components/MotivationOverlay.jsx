@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Sparkles, Briefcase } from 'lucide-react';
 import { calculateCountdown, countWorkingDays, formatWeekday } from '../utils/dateUtils';
 import { getMotivationalMessage } from '../utils/motivationalMessages';
@@ -45,7 +45,7 @@ export default function MotivationOverlay({ holiday, now, isOpen, onClose }) {
 
   // Redraw the motivational message every time the overlay opens,
   // so re-showing it feels like a fresh page load
-  const [openCount, setOpenCount] = React.useState(0);
+  const [openCount, setOpenCount] = useState(0);
   useEffect(() => {
     if (isOpen) setOpenCount((c) => c + 1);
   }, [isOpen]);

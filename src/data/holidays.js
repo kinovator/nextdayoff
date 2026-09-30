@@ -1,7 +1,14 @@
 /**
- * Comprehensive Statutory & Public Holiday Dataset for Canada
+ * Combined Statutory & Public Holiday Dataset (Canada + United States).
+ * Canadian entries live here; US federal entries come from ./holidaysUS.
+ *
+ * Observance convention (both countries): when a holiday falls on a weekend,
+ * `date` holds the OBSERVED day off (Sat -> preceding Fri, Sun -> following
+ * Mon; skipped when it would collide with another holiday on that date).
+ * Actual calendar dates can be surfaced later as a note.
  * Complies with docs/DATA_SCHEMA.md
  */
+import { US_HOLIDAYS } from './holidaysUS';
 
 export const ALL_CANADIAN_REGIONS = [
   'AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT', 'FED'
@@ -300,12 +307,12 @@ export const HOLIDAYS = [
   {
     id: 'ca-indigenous-peoples-2026',
     name: 'National Indigenous Peoples Day',
-    date: '2026-06-21',
+    date: '2026-06-22',
     regions: ['NT', 'YT'],
     optionalRegions: ['FED', 'BC'],
     type: 'stat',
     description: 'Honours the heritage, cultures, and valuable contributions of First Nations, Inuit, and Métis peoples.',
-    longWeekend: false,
+    longWeekend: true,
     category: 'territorial',
   },
   {
@@ -421,7 +428,7 @@ export const HOLIDAYS = [
   {
     id: 'ca-boxing-day-2026',
     name: 'Boxing Day',
-    date: '2026-12-26',
+    date: '2026-12-28',
     regions: ['ON', 'FED'],
     optionalRegions: ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'PE', 'QC', 'SK', 'YT'],
     type: 'stat',
@@ -610,7 +617,7 @@ export const HOLIDAYS = [
   {
     id: 'ca-christmas-2027',
     name: 'Christmas Day',
-    date: '2027-12-25',
+    date: '2027-12-24',
     regions: [...ALL_CANADIAN_REGIONS],
     optionalRegions: [],
     type: 'stat',
@@ -621,7 +628,7 @@ export const HOLIDAYS = [
   {
     id: 'ca-boxing-day-2027',
     name: 'Boxing Day',
-    date: '2027-12-26',
+    date: '2027-12-27',
     regions: ['ON', 'FED'],
     optionalRegions: ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'PE', 'QC', 'SK', 'YT'],
     type: 'stat',
@@ -629,4 +636,7 @@ export const HOLIDAYS = [
     longWeekend: true,
     category: 'provincial',
   },
+
+  // -------- United States (federal, from ./holidaysUS) --------
+  ...US_HOLIDAYS,
 ];

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { X, Check, Navigation, Search, HelpCircle, Building2 } from 'lucide-react';
-import { PROVINCES } from '../data/provinces';
+import { useState } from 'react';
+import { X, Check, Navigation, Search } from 'lucide-react';
+import { REGIONS, COUNTRIES, getCountryForRegion } from '../data/regions';
 
 export default function RegionSelector({
   isOpen,
@@ -14,14 +14,19 @@ export default function RegionSelector({
   locationFeedback,
 }) {
   const [search, setSearch] = useState('');
+  // Country tab — defaults to the country of the currently selected region
+  const [countryFilter, setCountryFilter] = useState(() =>
+    getCountryForRegion(selectedRegion).code
+  );
 
   if (!isOpen) return null;
 
-  const filteredProvinces = PROVINCES.filter(
-    (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.code.toLowerCase().includes(search.toLowerCase()) ||
-      p.capital.toLowerCase().includes(search.toLowerCase())
+  const filteredRegions = REGIONS.filter(
+    (r) =>
+      r.country === countryFilter &&
+      (r.name.toLowerCase().includes(search.toLowerCase()) ||
+        r.code.toLowerCase().includes(search.toLowerCase()) ||
+        r.capital.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
@@ -37,7 +42,7 @@ export default function RegionSelector({
               <span>Select Your Jurisdiction</span>
             </h2>
             <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
-              Statutory holidays differ by province and territory in Canada
+              Statutory holidays differ by region within each country
             </p>
           </div>
           <button
@@ -47,6 +52,23 @@ export default function RegionSelector({
           >
             <X className="w-5 h-5" />
           </button>
+        </div>
+
+        {/* Country Tabs */}
+        <div className="flex gap-1.5 px-4 py-2.5 border-b border-stone-200/60 dark:border-stone-800/60">
+          {COUNTRIES.map((c) => (
+            <button
+              key={c.code}
+              onClick={() => setCountryFilter(c.code)}
+              className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 ${
+                countryFilter === c.code
+                  ? 'bg-amber-500 text-white shadow-sm'
+                  : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700'
+              }`}
+            >
+              <span>{c.flag}</span> {c.name}
+            </button>
+          ))}
         </div>
 
         {/* Action: Auto-Detect GPS / Location */}
@@ -59,7 +81,7 @@ export default function RegionSelector({
           >
             <Navigation className={`w-4 h-4 ${isDetectingLocation ? 'animate-spin' : ''}`} />
             <span>
-              {isDetectingLocation ? 'Detecting your province...' : 'Auto-Detect Using My Location'}
+              {isDetectingLocation ? 'Detecting your region...' : 'Auto-Detect Using My Location'}
             </span>
           </button>
           {locationFeedback && (
@@ -75,7 +97,7 @@ export default function RegionSelector({
             <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search province, territory, or capital..."
+              placeholder="Search region, state, or capital..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700/80 text-stone-800 dark:text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
@@ -83,9 +105,9 @@ export default function RegionSelector({
           </div>
         </div>
 
-        {/* Province List */}
+        {/* Region List */}
         <div className="flex-1 overflow-y-auto p-3 space-y-1.5 divide-y divide-stone-100 dark:divide-stone-800/40">
-          {filteredProvinces.map((prov) => {
+          {filteredRegions.map((prov) => {
             const isSelected = prov.code === selectedRegion;
             return (
               <button

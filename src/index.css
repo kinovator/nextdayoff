@@ -45,6 +45,12 @@
   height: 6px;
 }
 
+/* Reserve scrollbar space up front so content width never shifts when a
+   scrollbar appears or disappears (e.g. long vs short holiday lists) */
+html {
+  scrollbar-gutter: stable;
+}
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }

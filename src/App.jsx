@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Header from './components/Header';
 import HeroCountdown from './components/HeroCountdown';
 import HolidayList from './components/HolidayList';
@@ -8,7 +8,7 @@ import InstallBanner from './components/InstallBanner';
 import InfoModal from './components/InfoModal';
 import MotivationOverlay from './components/MotivationOverlay';
 
-import { PROVINCES, getProvinceByCode, DEFAULT_PROVINCE_CODE } from './data/provinces';
+import { REGIONS, getRegionByCode, DEFAULT_REGION_CODE } from './data/regions';
 import { getNextHoliday, getUpcomingHolidays } from './utils/dateUtils';
 import {
   getStoredRegion,
@@ -21,7 +21,7 @@ import {
 import { detectRegionFromGeolocation, detectRegionFromTimezone } from './utils/geoUtils';
 
 export default function App() {
-  const [selectedRegion, setSelectedRegion] = useState(() => getStoredRegion(DEFAULT_PROVINCE_CODE));
+  const [selectedRegion, setSelectedRegion] = useState(() => getStoredRegion(DEFAULT_REGION_CODE));
   const [theme, setTheme] = useState(() => getStoredTheme());
   const [includeOptional, setIncludeOptional] = useState(() => getStoredIncludeOptional());
   const [now, setNow] = useState(() => new Date());
@@ -131,24 +131,27 @@ export default function App() {
       console.warn('Geolocation error, falling back to timezone', err);
       const tzResult = detectRegionFromTimezone();
       if (tzResult) {
-        const prov = getProvinceByCode(tzResult.code);
-        setSelectedRegion(prov.code);
-        setStoredRegion(prov.code);
-        setLocationFeedback(`📍 Matched to ${prov.name} via local timezone.`);
+        const region = getRegionByCode(tzResult.code);
+        setSelectedRegion(region.code);
+        setStoredRegion(region.code);
+        setLocationFeedback(`📍 Matched to ${region.name} via local timezone.`);
       } else {
-        setLocationFeedback('Could not determine your Canadian province automatically.');
+        setLocationFeedback('Could not determine your region automatically.');
       }
     } finally {
       setIsDetectingLocation(false);
     }
   };
 
-  const currentProvince = getProvinceByCode(selectedRegion);
   const nextHoliday = getNextHoliday(selectedRegion, includeOptional, now);
   const upcomingHolidays = getUpcomingHolidays(selectedRegion, includeOptional, 15, now);
 
-  // Quick switch chips for common provinces
-  const quickChips = ['BC', 'ON', 'QC', 'AB', 'FED'];
+  // Quick switch chips for common regions of the current country
+  const selectedCountry = getRegionByCode(selectedRegion).country;
+  const quickChips = (
+    selectedCountry === 'US' ? ['NY', 'CA', 'TX', 'FL', 'IL'] : ['BC', 'ON', 'QC', 'AB', 'FED']
+  ).filter((code) => REGIONS.some((r) => r.code === code && r.country === selectedCountry));
+  const regionCount = REGIONS.filter((r) => r.country === selectedCountry).length;
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#121110] text-stone-900 dark:text-stone-100 flex flex-col transition-colors duration-200 selection:bg-amber-200 dark:selection:bg-amber-900/60">
@@ -173,7 +176,7 @@ export default function App() {
           <div className="flex items-center justify-between gap-1.5 mb-3 overflow-x-auto pb-1 scrollbar-none">
             <div className="flex items-center gap-1.5">
               {quickChips.map((code) => {
-                const p = getProvinceByCode(code);
+                const p = getRegionByCode(code);
                 const isActive = selectedRegion === code;
                 return (
                   <button
@@ -195,7 +198,7 @@ export default function App() {
               onClick={() => setIsRegionModalOpen(true)}
               className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline whitespace-nowrap pl-2"
             >
-              All 13+
+              All {regionCount}+
             </button>
           </div>
 
@@ -290,11 +293,11 @@ export default function App() {
         {/* Minimal Footer */}
         <footer className="mt-8 mb-4 pt-4 border-t border-stone-200/60 dark:border-stone-800/60 text-center text-xs text-stone-400 dark:text-stone-500 space-y-1">
           <p className="flex items-center justify-center gap-1">
-            <span>Built with precision for Canadian workers</span>
-            <span>🍁</span>
+            <span>Built with precision for workers everywhere</span>
+            <span>🌍</span>
           </p>
           <p className="text-[10px] text-stone-400/80 dark:text-stone-600">
-            Statutory entitlement verified under Federal & Provincial Employment Standards.
+            Statutory entitlement verified under local employment standards.
           </p>
         </footer>
       </main>

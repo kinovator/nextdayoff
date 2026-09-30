@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'icons/*.svg', 'icons/*.png'],
       manifest: {
-        name: 'NextDayOff - Canada Stat Holiday Countdown',
+        name: 'NextDayOff - Stat Holiday Countdown',
         short_name: 'NextDayOff',
-        description: 'Clean, mobile-first countdown to your next statutory holiday in Canada.',
+        description: 'Clean, mobile-first countdown to your next statutory holiday in Canada and the US.',
         theme_color: '#18181b',
         background_color: '#faf8f5',
         display: 'standalone',

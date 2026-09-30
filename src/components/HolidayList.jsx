@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
 import {
   formatMediumDate,
@@ -6,7 +6,6 @@ import {
   isStatForRegion,
   getLocalDateString,
 } from '../utils/dateUtils';
-import { getProvinceByCode } from '../data/provinces';
 
 export default function HolidayList({
   holidays,
@@ -15,7 +14,6 @@ export default function HolidayList({
   onSelectHoliday,
   onBackToCountdown,
 }) {
-  const province = getProvinceByCode(selectedRegion);
   const todayStr = getLocalDateString(now);
 
   // Year filter pills derive from the clock — never hardcoded — so they roll
@@ -101,8 +99,8 @@ export default function HolidayList({
         </div>
       </div>
 
-      {/* Scrollable list */}
-      <div className="space-y-2 max-h-[62vh] overflow-y-auto pr-0.5">
+      {/* Scrollable list — scrollbar gutter reserved so layout never shifts between year filters */}
+      <div className="space-y-2 max-h-[62vh] overflow-y-auto [scrollbar-gutter:stable] pr-0.5">
         {filteredHolidays.length === 0 ? (
           <div className="p-8 rounded-2xl bg-stone-50 dark:bg-stone-900/40 text-center text-xs text-stone-400 border border-dashed border-stone-200 dark:border-stone-800">
             No holidays found for this year.

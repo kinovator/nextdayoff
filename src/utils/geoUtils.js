@@ -1,6 +1,6 @@
-import { PROVINCES } from '../data/provinces';
+import { REGIONS } from '../data/regions';
 
-const TIMEZONE_TO_PROVINCE = {
+const TIMEZONE_TO_REGION = {
   'America/Vancouver': 'BC',
   'America/Dawson_Creek': 'BC',
   'America/Creston': 'BC',
@@ -26,6 +26,17 @@ const TIMEZONE_TO_PROVINCE = {
   'America/Rankin_Inlet': 'NU',
   'America/Resolute': 'NU',
   'America/Pangnirtung': 'NU',
+  // United States (representative state per IANA zone)
+  'America/New_York': 'NY',
+  'America/Detroit': 'MI',
+  'America/Indiana/Indianapolis': 'IN',
+  'America/Chicago': 'IL',
+  'America/Denver': 'CO',
+  'America/Phoenix': 'AZ',
+  'America/Boise': 'ID',
+  'America/Los_Angeles': 'CA',
+  'Pacific/Honolulu': 'HI',
+  'America/Anchorage': 'AK',
 };
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -45,9 +56,9 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 export function detectRegionFromTimezone() {
   try {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    if (tz && TIMEZONE_TO_PROVINCE[tz]) {
+    if (tz && TIMEZONE_TO_REGION[tz]) {
       return {
-        code: TIMEZONE_TO_PROVINCE[tz],
+        code: TIMEZONE_TO_REGION[tz],
         source: 'timezone',
         detail: tz,
       };
@@ -67,29 +78,29 @@ export async function detectRegionFromGeolocation() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        let closestProvince = null;
+        let closestRegion = null;
         let minDistance = Infinity;
 
-        // Compare against provinces with coordinates (skip FED)
-        for (const prov of PROVINCES) {
-          if (!prov.latitude || !prov.longitude) continue;
-          const dist = calculateDistance(latitude, longitude, prov.latitude, prov.longitude);
+        // Compare against all regions with coordinates
+        for (const region of REGIONS) {
+          if (!region.latitude || !region.longitude) continue;
+          const dist = calculateDistance(latitude, longitude, region.latitude, region.longitude);
           if (dist < minDistance) {
             minDistance = dist;
-            closestProvince = prov;
+            closestRegion = region;
           }
         }
 
-        if (closestProvince) {
+        if (closestRegion) {
           resolve({
-            code: closestProvince.code,
-            name: closestProvince.name,
+            code: closestRegion.code,
+            name: closestRegion.name,
             source: 'gps',
             coords: { latitude, longitude },
             distanceKm: Math.round(minDistance),
           });
         } else {
-          reject(new Error('Could not match coordinates to a Canadian province.'));
+          reject(new Error('Could not match coordinates to a supported region.'));
         }
       },
       (error) => {

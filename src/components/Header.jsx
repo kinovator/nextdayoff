@@ -1,6 +1,5 @@
-import React from 'react';
 import { Sun, Moon, MapPin, Calendar, Clock, Info } from 'lucide-react';
-import { getProvinceByCode } from '../data/provinces';
+import { getRegionByCode, getCountryForRegion } from '../data/regions';
 
 export default function Header({
   selectedRegion,
@@ -12,7 +11,8 @@ export default function Header({
   onToggleTab,
   isDetectingLocation,
 }) {
-  const province = getProvinceByCode(selectedRegion);
+  const region = getRegionByCode(selectedRegion);
+  const country = getCountryForRegion(selectedRegion);
 
   return (
     <header className="sticky top-0 z-30 w-full glass-panel safe-pt border-b border-stone-200/80 dark:border-stone-800/80 transition-colors">
@@ -20,7 +20,7 @@ export default function Header({
         {/* Brand */}
         <div className="flex items-center space-x-2.5">
           <div className="w-9 h-9 rounded-xl bg-amber-500/10 dark:bg-amber-400/15 border border-amber-500/20 dark:border-amber-400/25 flex items-center justify-center text-amber-600 dark:text-amber-400 shadow-sm">
-            <span className="text-lg select-none">🍁</span>
+            <span className="text-lg select-none">⏳</span>
           </div>
           <div>
             <div className="flex items-center space-x-1.5">
@@ -28,7 +28,7 @@ export default function Header({
                 NextDayOff
               </span>
               <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-md uppercase tracking-wider bg-stone-200/70 text-stone-700 dark:bg-stone-800 dark:text-stone-300">
-                Canada
+                {country.name}
               </span>
             </div>
             <p className="text-[11px] text-stone-500 dark:text-stone-400 font-medium">
@@ -44,15 +44,15 @@ export default function Header({
             id="region-selector-btn"
             onClick={onOpenRegionModal}
             className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-stone-100 dark:bg-stone-800/90 text-stone-800 dark:text-stone-200 hover:bg-stone-200/80 dark:hover:bg-stone-700/80 border border-stone-300/60 dark:border-stone-700/60 transition active:scale-95 shadow-sm"
-            title="Change province or auto-detect location"
-            aria-label={`Current province: ${province.name}. Click to change.`}
+            title="Change region or auto-detect location"
+            aria-label={`Current region: ${region.name}. Click to change.`}
           >
             <MapPin
               className={`w-3.5 h-3.5 text-amber-600 dark:text-amber-400 ${
                 isDetectingLocation ? 'animate-bounce' : ''
               }`}
             />
-            <span>{province.code}</span>
+            <span>{region.code}</span>
             <span className="text-stone-400 dark:text-stone-500 text-[10px]">▼</span>
           </button>
 
@@ -104,7 +104,7 @@ export default function Header({
             onClick={onOpenInfoModal}
             className="p-2 rounded-full text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition active:scale-90"
             aria-label="App info & rules"
-            title="About Statutory Holidays in Canada"
+            title="About Statutory Holidays"
           >
             <Info className="w-4 h-4" />
           </button>
