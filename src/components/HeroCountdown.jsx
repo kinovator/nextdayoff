@@ -247,16 +247,18 @@ export default function HeroCountdown({
         )}
       </div>
 
-      {/* Exact wait — kept outside the calendar frame to avoid crowding it */}
-      <div className="flex justify-center my-2">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-100 dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 text-[11px] text-stone-500 dark:text-stone-400 tabular-numbers">
-          <Clock className="w-3 h-3 text-stone-400 shrink-0" />
-          <span>Exact wait:</span>
-          <span className="font-semibold text-stone-700 dark:text-stone-300 font-mono">
-            {countdown.days}d {String(countdown.hours).padStart(2, '0')}h {String(countdown.minutes).padStart(2, '0')}m {String(countdown.seconds).padStart(2, '0')}s
-          </span>
+      {/* Exact wait — hidden on the day itself (nothing left to wait for) */}
+      {!countdown.isToday && (
+        <div className="flex justify-center my-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-100 dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 text-[11px] text-stone-500 dark:text-stone-400 tabular-numbers">
+            <Clock className="w-3 h-3 text-stone-400 shrink-0" />
+            <span>Exact wait:</span>
+            <span className="font-semibold text-stone-700 dark:text-stone-300 font-mono">
+              {countdown.days}d {String(countdown.hours).padStart(2, '0')}h {String(countdown.minutes).padStart(2, '0')}m {String(countdown.seconds).padStart(2, '0')}s
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Minimal Action Buttons Bar */}
       <div className="w-full grid grid-cols-2 gap-2 pt-3 mt-3 border-t border-stone-100 dark:border-stone-800/80">
