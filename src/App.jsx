@@ -7,6 +7,7 @@ import HolidayDetailModal from './components/HolidayDetailModal';
 import InstallBanner from './components/InstallBanner';
 import InfoModal from './components/InfoModal';
 import MotivationOverlay from './components/MotivationOverlay';
+import ReminderPrompt from './components/ReminderPrompt';
 
 import { REGIONS, getRegionByCode, DEFAULT_REGION_CODE } from './data/regions';
 import { getNextHoliday, getUpcomingHolidays } from './utils/dateUtils';
@@ -17,7 +18,16 @@ import {
   setStoredTheme,
   getStoredIncludeOptional,
   setStoredIncludeOptional,
+  getStoredRemindersEnabled,
+  setStoredRemindersEnabled,
 } from './utils/storage';
+import {
+  REMINDER_CHECK_INTERVAL_MS,
+  checkAndSendReminder,
+  getNotificationPermission,
+  isNotificationSupported,
+  requestNotificationPermission,
+} from './utils/notifications';
 import { detectRegionFromGeolocation, detectRegionFromTimezone } from './utils/geoUtils';
 
 export default function App() {
@@ -34,6 +44,12 @@ export default function App() {
   const [selectedHolidayForModal, setSelectedHolidayForModal] = useState(null);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [locationFeedback, setLocationFeedback] = useState('');
+
+  // Holiday reminders (48h heads-up, see utils/notifications.js)
+  const [remindersEnabled, setRemindersEnabled] = useState(() => getStoredRemindersEnabled());
+  const [notificationPermission, setNotificationPermission] = useState(() =>
+    getNotificationPermission()
+  );
 
   // First-arrival motivational overlay (auto-closes, see MotivationOverlay)
   const [isWelcomeOpen, setIsWelcomeOpen] = useState(true);
@@ -114,6 +130,28 @@ export default function App() {
     setStoredIncludeOptional(val);
   };
 
+  const handleToggleReminders = useCallback(async () => {
+    if (!isNotificationSupported()) return;
+
+    if (remindersEnabled) {
+      setRemindersEnabled(false);
+      setStoredRemindersEnabled(false);
+      return;
+    }
+
+    // Must run inside the click gesture for browsers to honour the prompt
+    let permission = getNotificationPermission();
+    if (permission === 'default') {
+      permission = await requestNotificationPermission();
+    }
+    setNotificationPermission(permission);
+
+    if (permission === 'granted') {
+      setRemindersEnabled(true);
+      setStoredRemindersEnabled(true);
+    }
+  }, [remindersEnabled]);
+
   const handleAutoDetectLocation = async () => {
     setIsDetectingLocation(true);
     setLocationFeedback('Requesting device location...');
@@ -146,6 +184,41 @@ export default function App() {
   const nextHoliday = getNextHoliday(selectedRegion, includeOptional, now);
   const upcomingHolidays = getUpcomingHolidays(selectedRegion, includeOptional, 15, now);
 
+  /**
+   * Holiday reminder scheduler: checks on mount, every 15 minutes while open,
+   * and whenever the app returns to the foreground. Deduplicated per holiday
+   * inside checkAndSendReminder, so nothing fires twice.
+   */
+  useEffect(() => {
+    if (!remindersEnabled || !nextHoliday) return undefined;
+
+    let cancelled = false;
+    const run = async () => {
+      const result = await checkAndSendReminder({
+        holiday: nextHoliday,
+        region: getRegionByCode(selectedRegion),
+        enabled: true,
+      });
+      if (!cancelled && result.status === 'sent') {
+        console.info(`Holiday reminder sent for ${nextHoliday.id}`);
+      }
+    };
+
+    run();
+    const timer = setInterval(run, REMINDER_CHECK_INTERVAL_MS);
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') run();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [remindersEnabled, nextHoliday && nextHoliday.id, selectedRegion]);
+
   // Quick switch chips for common regions of the current country
   const selectedCountry = getRegionByCode(selectedRegion).country;
   const quickChips = (
@@ -172,6 +245,18 @@ export default function App() {
       {/* Main Mobile-first Container */}
       <main className="flex-1 w-full max-w-xl mx-auto px-4 py-4 safe-pb flex flex-col justify-between">
         <div>
+          {/* Reminder opt-in — hidden once enabled, denied, or dismissed */}
+          <ReminderPrompt
+            isVisible={
+              Boolean(nextHoliday) &&
+              !remindersEnabled &&
+              isNotificationSupported() &&
+              notificationPermission !== 'denied'
+            }
+            holidayName={nextHoliday ? nextHoliday.name : ''}
+            onEnable={handleToggleReminders}
+          />
+
           {/* Quick Region Selector Bar */}
           <div className="flex items-center justify-between gap-1.5 mb-3 overflow-x-auto pb-1 scrollbar-none">
             <div className="flex items-center gap-1.5">
@@ -335,6 +420,9 @@ export default function App() {
       <InfoModal
         isOpen={isInfoModalOpen}
         onClose={() => setIsInfoModalOpen(false)}
+        remindersEnabled={remindersEnabled}
+        notificationPermission={notificationPermission}
+        onToggleReminders={handleToggleReminders}
       />
     </div>
   );

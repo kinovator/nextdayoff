@@ -17,6 +17,7 @@
 - **Install Prompt:** Customized install instructions for both iOS (Safari) and Android / Chromium browsers.
 - **Motivational Overlay:** A message-first overlay shown on first arrival (and re-openable from the countdown page) with the motivational message and days left — auto-closes, then triggers the celebration.
 - **Tiered Celebrations:** Time-remaining-based effects that escalate as the day off approaches — grand confetti on the day itself, fireworks at 1–3 days, rocket streaks at 4–5 days, and a gentle shimmer within a week — with a matching hero-card flash.
+- **Holiday Reminders:** Opt-in reminders 48 hours before your next statutory day off, de-duplicated per holiday. Tapping the notification brings the installed app back to the front.
 - **Aesthetics & Theme:** Clean, neutral palette with warm stone accents and dark/light mode toggle. Compliant with mobile hardware safe areas (`env(safe-area-inset-*)`).
 
 ## Tech Stack

@@ -14,6 +14,8 @@ Do not begin implementation on these tasks until user explicitly request impleme
   - _Shipped:_ optional `actualDate` field on the 2026–2027 shifted entries, rendered as an "Actual date" note in the holiday detail modal via `getActualDate()`.
 - [ ] **Web Push Notifications:** 
   - Implement Service Worker Push API to send local reminders 48 hours prior to an upcoming statutory holiday.
+  - _In progress:_ opt-in 48-hour reminders ship via the service worker notification API — de-duplicated per holiday, checked on load, every 15 minutes while open, and whenever the app returns to the foreground. Tapping a reminder focuses or opens the app.
+  - _Remaining:_ server-delivered push so reminders arrive with the app fully closed (needs a push backend with VAPID keys), plus scheduled background checks via Periodic Background Sync where supported.
 
 
 ## Phase 2: Advanced Optimization & Expansion

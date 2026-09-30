@@ -6,6 +6,8 @@ export const STORAGE_KEYS = {
   REGION: 'stat_app_region',
   THEME: 'stat_app_theme',
   INCLUDE_OPTIONAL: 'stat_app_include_optional',
+  REMINDERS: 'stat_app_reminders',
+  NOTIFIED: 'stat_app_notified',
 };
 
 export function getStoredRegion(defaultRegion = 'BC') {
@@ -61,5 +63,50 @@ export function setStoredIncludeOptional(val) {
     localStorage.setItem(STORAGE_KEYS.INCLUDE_OPTIONAL, String(val));
   } catch (e) {
     console.warn('Could not persist optional holiday preference', e);
+  }
+}
+
+export function getStoredRemindersEnabled() {
+  try {
+    return localStorage.getItem(STORAGE_KEYS.REMINDERS) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+export function setStoredRemindersEnabled(val) {
+  try {
+    localStorage.setItem(STORAGE_KEYS.REMINDERS, String(val));
+  } catch (e) {
+    console.warn('Could not persist reminder preference', e);
+  }
+}
+
+const NOTIFIED_LIMIT = 25;
+
+/**
+ * Holiday ids already reminded about, newest first. Keeps reminders to one
+ * per holiday even across reloads.
+ */
+export function getNotifiedHolidayIds() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.NOTIFIED);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function markHolidayNotified(holidayId) {
+  if (!holidayId) return;
+  try {
+    const next = [holidayId, ...getNotifiedHolidayIds().filter((id) => id !== holidayId)].slice(
+      0,
+      NOTIFIED_LIMIT
+    );
+    localStorage.setItem(STORAGE_KEYS.NOTIFIED, JSON.stringify(next));
+  } catch (e) {
+    console.warn('Could not persist notified holiday', e);
   }
 }

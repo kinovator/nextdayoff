@@ -14,6 +14,7 @@
 nextdayoff/
 ├── public/
 │   ├── icons/                     # PWA icons (192x192, 512x512, SVG)
+│   ├── notification-sw.js         # notificationclick handler imported by the SW
 │   ├── apple-touch-icon.png
 │   └── favicon.svg
 ├── src/
@@ -24,7 +25,8 @@ nextdayoff/
 │   │   ├── HolidayList.jsx        # Chronological list with year filters
 │   │   ├── HolidayDetailModal.jsx # Holiday details & statutory observance matrix
 │   │   ├── MotivationOverlay.jsx  # First-arrival motivational message overlay
-│   │   ├── InfoModal.jsx          # Statutory holiday rules reference
+│   │   ├── ReminderPrompt.jsx     # Opt-in strip for holiday reminders
+│   │   ├── InfoModal.jsx          # Rules reference + reminder toggle
 │   │   └── InstallBanner.jsx      # PWA install prompt
 │   ├── data/
 │   │   ├── regions.js             # Countries + all regions (codes, geo, timezones)
@@ -34,6 +36,7 @@ nextdayoff/
 │   │   ├── dateUtils.js           # Countdown math, working-day counting, filtering
 │   │   ├── geoUtils.js            # GPS proximity + timezone-based region detection
 │   │   ├── celebrations.js        # Tiered effect presets and dispatcher
+│   │   ├── notifications.js       # Reminder window, dedupe, notification delivery
 │   │   ├── motivationalMessages.js # Message pools keyed by time-remaining tier
 │   │   └── storage.js             # localStorage helpers
 │   ├── App.jsx                    # Main application layout & state container
@@ -51,3 +54,4 @@ nextdayoff/
 - **Region Resolution:** stored preference → GPS proximity (`detectRegionFromGeolocation`) → IANA timezone match (`detectRegionFromTimezone`) → `DEFAULT_REGION_CODE`.
 - **Countdown Pipeline:** `getNextHoliday(regionCode)` selects the soonest applicable holiday, `calculateCountdown` derives the day/hour/minute/second vector, and `countWorkingDays` derives remaining Monday–Friday shifts (today's shift counts until 6pm local).
 - **Celebration Pipeline:** `getCelebrationTier(daysLeft)` maps time remaining to an effect preset in `celebrations.js`; the hero dispatches it after the motivational overlay closes.
+- **Reminder Pipeline:** `checkAndSendReminder()` in `notifications.js` gates on opt-in → permission → 48-hour window → per-holiday dedupe, then delivers via `ServiceWorkerRegistration.showNotification`. `App.jsx` runs it on load, every 15 minutes while open, and on foreground resume; `public/notification-sw.js` (injected through `workbox.importScripts`) focuses or opens the app when a reminder is tapped.

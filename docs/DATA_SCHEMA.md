@@ -55,6 +55,8 @@ The application state persistence layer relies on lightweight client-side storag
 - `stat_app_region`: Stores the user's selected region code string as a persistent fallback default.
 - `stat_app_theme`: Stores user UI theme preference (`dark` or `light`).
 - `stat_app_include_optional`: Stores whether optional/civic holidays are included in lists (`'true'` / `'false'`).
+- `stat_app_reminders`: Stores whether holiday reminder notifications are opted into (`'true'` / `'false'`).
+- `stat_app_notified`: Store of holiday ids already reminded about (JSON array, newest first, capped at 25) so each holiday notifies once.
 
 ## 5. Adding a New Country / Region
 1. Add a `COUNTRIES` entry (code, name, flag).
