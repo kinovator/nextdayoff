@@ -435,9 +435,6 @@ export default function App() {
             <span>Built with precision for workers everywhere</span>
             <span>🌍</span>
           </p>
-          <p className="text-[10px] text-stone-400/80 dark:text-stone-600">
-            Statutory entitlement verified under local employment standards.
-          </p>
         </footer>
       </main>
 

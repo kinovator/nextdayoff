@@ -136,6 +136,22 @@ html {
   animation: overlayProgress 4.5s linear forwards;
 }
 
+/* Bottom-sheet slide-up for modals (mobile only — desktop stays centered) */
+@keyframes sheetSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 639px) {
+  .animate-sheet-up {
+    animation: sheetSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
 /* Number ticker font smoothing */
 .tabular-numbers {
   font-variant-numeric: tabular-nums;

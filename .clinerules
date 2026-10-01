@@ -1,0 +1,7 @@
+# Communication
+
+Use caveman skill (ultra-compressed mode) for all responses.
+
+# Commands
+
+Use rtk (rust token killer) for all shell commands (`rtk git`, `rtk gh`, `rtk ls`, etc.) to keep output compact.

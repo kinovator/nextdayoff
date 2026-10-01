@@ -1,4 +1,4 @@
-import { X, ShieldCheck, Bell } from 'lucide-react';
+import { X, Bell } from 'lucide-react';
 import { describeReminderOffsets } from '../utils/notifications';
 
 /**
@@ -35,7 +35,7 @@ export default function InfoModal({
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-stone-900/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="w-full max-w-lg bg-[#FAF8F5] dark:bg-[#18181B] rounded-t-3xl sm:rounded-2xl shadow-2xl border border-stone-200/90 dark:border-stone-800 flex flex-col max-h-[90vh] overflow-hidden"
+        className="w-full max-w-lg bg-[#FAF8F5] dark:bg-[#18181B] rounded-t-3xl sm:rounded-2xl shadow-2xl border border-stone-200/90 dark:border-stone-800 flex flex-col max-h-[90vh] overflow-hidden animate-sheet-up"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between">
@@ -54,19 +54,6 @@ export default function InfoModal({
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 text-xs sm:text-sm text-stone-700 dark:text-stone-300">
-          <section className="space-y-2">
-            <h3 className="font-bold text-stone-900 dark:text-stone-100 text-sm flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-              <span>How Stat Holidays Work</span>
-            </h3>
-            <p className="leading-relaxed">
-              Public and statutory holidays are designated by federal, state, provincial, or territorial employment standards legislation, depending on the jurisdiction.
-            </p>
-            <p className="leading-relaxed">
-              When a holiday is statutory in your jurisdiction, eligible workers have a legal right to take the day off with regular statutory holiday pay.
-            </p>
-          </section>
-
           <section className="p-3.5 rounded-2xl bg-stone-100 dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 space-y-2">
             <h4 className="font-semibold text-stone-900 dark:text-stone-100 text-xs uppercase tracking-wide">
               Good to Know

@@ -57,11 +57,11 @@ export default function HolidayList({
         <div className="flex items-center gap-2">
           <button
             onClick={onBackToCountdown}
-            className="flex items-center gap-1 px-2.5 py-1 -ml-1 rounded-xl text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-400/10 hover:bg-amber-500/20 transition active:scale-95"
+            className="p-1.5 -ml-1 rounded-xl text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-400/10 hover:bg-amber-500/20 transition active:scale-95"
             title="Return to Countdown"
+            aria-label="Back to Countdown"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Countdown</span>
+            <ArrowLeft className="w-4 h-4" />
           </button>
           <h2 className="text-sm sm:text-base font-bold text-stone-900 dark:text-stone-100 flex items-center gap-1.5">
             <span>Upcoming Holidays</span>

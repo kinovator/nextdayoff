@@ -141,11 +141,15 @@ export default function MotivationOverlay({ holiday, now, isOpen, onClose }) {
               {!isToday && (
                 <div className="mt-2 flex items-start gap-1 text-[9px] text-stone-500 dark:text-stone-400 text-center leading-snug">
                   <Briefcase className="w-2.5 h-2.5 text-stone-400 dark:text-stone-500 shrink-0 mt-px" />
-                  <span>
-                    <strong className="text-stone-700 dark:text-stone-300">{workStats.workDays}</strong>{' '}
-                    working shifts remaining
-                    {workStats.weekendDays > 0 ? ` (+${workStats.weekendDays} weekend days)` : ''}
-                  </span>
+                  <div className="leading-snug">
+                    <span>
+                      <strong className="text-stone-700 dark:text-stone-300">{workStats.workDays}</strong>{' '}
+                      working shifts remaining
+                    </span>
+                    {workStats.weekendDays > 0 && (
+                      <div>(+{workStats.weekendDays} weekend days)</div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
