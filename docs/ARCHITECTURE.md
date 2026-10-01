@@ -23,6 +23,7 @@ nextdayoff/
 │   │   ├── RegionSelector.jsx     # Country tabs + region picker with GPS detection
 │   │   ├── HeroCountdown.jsx      # Main real-time countdown clock + action bar
 │   │   ├── HolidayList.jsx        # Chronological list with year filters
+│   │   ├── HolidayCalendar.jsx    # Month-by-month calendar view of holidays
 │   │   ├── HolidayDetailModal.jsx # Holiday details & statutory observance matrix
 │   │   ├── MotivationOverlay.jsx  # First-arrival motivational message overlay
 │   │   ├── ReminderPrompt.jsx     # Opt-in strip for holiday reminders
@@ -33,7 +34,8 @@ nextdayoff/
 │   │   ├── holidays.js            # Canadian statutory holiday data
 │   │   └── holidaysUS.js          # US federal holiday data (merged into HOLIDAYS)
 │   ├── utils/
-│   │   ├── dateUtils.js           # Countdown math, working-day counting, filtering
+│   │   ├── dateUtils.js           # Countdown math, working-day counting, filtering,
+│   │   │                           # shared tier keys + month-name constants
 │   │   ├── geoUtils.js            # GPS proximity + timezone-based region detection
 │   │   ├── celebrations.js        # Tiered effect presets and dispatcher
 │   │   ├── notifications.js       # Reminder milestones, de-dupe, notification delivery
@@ -41,6 +43,7 @@ nextdayoff/
 │   │   ├── motivationalMessages.js # Message pools keyed by time-remaining tier
 │   │   └── storage.js             # localStorage helpers
 │   ├── App.jsx                    # Main application layout & state container
+│   ├── tabs.js                    # Single source of truth for view tabs (order, labels, icons)
 │   ├── main.jsx                   # React entry point + service worker registration
 │   └── index.css                  # Tailwind directives & custom CSS
 ├── docs/                          # Architecture, data schema, roadmap, dev guide

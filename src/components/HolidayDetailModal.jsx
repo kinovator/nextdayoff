@@ -23,7 +23,7 @@ export default function HolidayDetailModal({
   const actualDate = getActualDate(holiday);
 
   const handleShare = async () => {
-    const text = `${currentCountry.flag} ${holiday.name} is on ${formatLongDate(holiday.date)}! Check statutory holiday rules and countdown on NextDayOff.`;
+    const text = `${currentCountry.flag} ${holiday.name} is on ${formatLongDate(holiday.date)}! Check the countdown on NextDayOff.`;
     if (navigator.share) {
       try {
         await navigator.share({
@@ -43,7 +43,7 @@ export default function HolidayDetailModal({
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-stone-900/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="w-full max-w-lg bg-[#FAF8F5] dark:bg-[#18181B] rounded-t-3xl sm:rounded-2xl shadow-2xl border border-stone-200/90 dark:border-stone-800 flex flex-col max-h-[90vh] overflow-hidden"
+        className="w-full max-w-lg bg-[#FAF8F5] dark:bg-[#18181B] rounded-t-3xl sm:rounded-2xl shadow-2xl border border-stone-200/90 dark:border-stone-800 flex flex-col max-h-[90vh] overflow-hidden animate-sheet-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -111,16 +111,6 @@ export default function HolidayDetailModal({
           {/* Description */}
           <div className="p-3.5 rounded-xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 text-xs sm:text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
             {holiday.description || `General public holiday observed in ${currentCountry.name}.`}
-          </div>
-
-          {/* Statutory Employment Rule Note */}
-          <div className="p-3.5 rounded-xl bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/20 dark:border-amber-400/20 text-xs text-stone-700 dark:text-stone-300">
-            <h4 className="font-bold text-amber-900 dark:text-amber-200 mb-1 flex items-center gap-1.5">
-              <span>📋 Holiday Pay Basics</span>
-            </h4>
-            <p className="text-[11px] text-stone-600 dark:text-stone-400 leading-normal">
-              Employment standards vary by jurisdiction. Where a holiday is statutory, eligible employees are entitled to a day off with regular holiday pay; if required to work, premium or overtime pay typically applies. Check your local labor standards for exact rules.
-            </p>
           </div>
 
           {/* National Coverage Breakdown */}

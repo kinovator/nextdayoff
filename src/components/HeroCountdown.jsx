@@ -11,6 +11,8 @@ import {
   formatLongDate,
   formatWeekday,
   isStatForRegion,
+  getDaysLater,
+  MONTHS_FULL,
 } from '../utils/dateUtils';
 import { getRegionByCode } from '../data/regions';
 import { triggerCelebration } from '../utils/celebrations';
@@ -42,40 +44,33 @@ export default function HeroCountdown({
 
   // Month name for calendar header
   const monthNum = holiday.date.split('-')[1];
-  const monthNames = [
-    'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
-    'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER',
-  ];
-  const holidayMonthName = monthNames[parseInt(monthNum, 10) - 1];
+  const holidayMonthName = MONTHS_FULL[parseInt(monthNum, 10) - 1];
 
   // Rounded up days to the holiday:
-  const daysLater = countdown.isToday
-    ? 0
-    : Math.max(1, Math.ceil(countdown.totalMs / (1000 * 60 * 60 * 24)));
-
-  // Screen state for close holidays (within a week: <= 7 days)
-  const isClose = countdown.isToday || daysLater <= 7;
+  const daysLater = getDaysLater(countdown);
 
   // Counter used to restart the hero card flash animation on every celebration
   const [celebrationNonce, setCelebrationNonce] = useState(0);
 
   // Trigger the tiered celebration animation on the main screen hero section.
   // The effect is chosen by time remaining (see src/utils/celebrations.js):
-  // confetti finale today, fireworks at 1-3 days, rockets at 4-5 days,
-  // shimmer rain within a week, subtle sparkle beyond that.
+  // confetti finale today (the only party effect), motivational emoji pops
+  // before that — 📅 ⏰ 🚀 💪 🌱 ⏳ escalating as the day off gets closer.
   const handleCelebration = useCallback(() => {
     triggerCelebration(daysLater, countdown.isToday);
     setCelebrationNonce((n) => n + 1);
   }, [daysLater, countdown.isToday]);
 
   // When app opens, the first-arrival overlay shows the motivational message;
-  // once it closes (celebrationReady) and it's close (within a week or today),
-  // fire the tiered celebration on the hero screen
+  // once it closes (celebrationReady), fire the tiered celebration on the hero
+  // screen — the tier (and effect intensity) always scales with time remaining:
+  // a motivational emoji beat (📅 ⏰ 🚀 💪 🌱 ⏳) until the day off, then the
+  // full confetti finale.
   useEffect(() => {
-    if (isClose && celebrationReady) {
+    if (celebrationReady) {
       handleCelebration();
     }
-  }, [holiday.id, isClose, celebrationReady, handleCelebration]);
+  }, [holiday.id, celebrationReady, handleCelebration]);
 
   const handleShare = async () => {
     const text = countdown.isToday
@@ -220,7 +215,7 @@ export default function HeroCountdown({
 
       {/* Motivation opener + emoji celebrate — left spacer balances the circle so the button text stays app-centered */}
       <div className="my-2.5 max-w-sm w-full flex items-center gap-2">
-        {isClose && <div className="w-11 shrink-0" aria-hidden="true" />}
+        <div className="w-11 shrink-0" aria-hidden="true" />
         <button
           onClick={onShowMotivation}
           type="button"
@@ -233,18 +228,16 @@ export default function HeroCountdown({
           </span>
         </button>
 
-        {/* Animated circle emoji — click to celebrate (only when it's close) */}
-        {isClose && (
-          <button
-            onClick={handleCelebration}
-            type="button"
-            className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center bg-amber-500/15 hover:bg-amber-500/25 dark:bg-amber-400/15 dark:hover:bg-amber-400/25 border border-amber-500/30 dark:border-amber-400/30 animate-bounce transition active:scale-95 cursor-pointer shadow-xs"
-            title="Celebrate"
-            aria-label="Celebrate"
-          >
-            <span className="text-xl leading-none select-none">🎉</span>
-          </button>
-        )}
+        {/* Animated circle emoji — click to celebrate (tier scales with time left) */}
+        <button
+          onClick={handleCelebration}
+          type="button"
+          className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center bg-amber-500/15 hover:bg-amber-500/25 dark:bg-amber-400/15 dark:hover:bg-amber-400/25 border border-amber-500/30 dark:border-amber-400/30 animate-bounce transition active:scale-95 cursor-pointer shadow-xs"
+          title="Celebrate"
+          aria-label="Celebrate"
+        >
+          <span className="text-xl leading-none select-none">🎉</span>
+        </button>
       </div>
 
       {/* Exact wait — hidden on the day itself (nothing left to wait for) */}

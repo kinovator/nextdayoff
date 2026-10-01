@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Sparkles, Briefcase } from 'lucide-react';
-import { calculateCountdown, countWorkingDays, formatWeekday } from '../utils/dateUtils';
+import { calculateCountdown, countWorkingDays, formatWeekday, getDaysLater, MONTHS_FULL } from '../utils/dateUtils';
 import { getMotivationalMessage } from '../utils/motivationalMessages';
 
 // Auto-close delay for the overlay.
@@ -51,20 +51,12 @@ export default function MotivationOverlay({ holiday, now, isOpen, onClose }) {
   }, [isOpen]);
 
   const countdown = holiday ? calculateCountdown(holiday.date, now) : null;
-  const daysLater = countdown
-    ? countdown.isToday
-      ? 0
-      : Math.max(1, Math.ceil(countdown.totalMs / (1000 * 60 * 60 * 24)))
-    : null;
+  const daysLater = getDaysLater(countdown);
   const isToday = Boolean(countdown && countdown.isToday);
 
   // Calendar frame details (mirrors the hero's physical calendar design)
-  const monthNames = [
-    'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
-    'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER',
-  ];
   const holidayMonthName = holiday
-    ? monthNames[parseInt(holiday.date.split('-')[1], 10) - 1]
+    ? MONTHS_FULL[parseInt(holiday.date.split('-')[1], 10) - 1]
     : '';
   const weekday = holiday ? formatWeekday(holiday.date) : '';
   const workStats = holiday
@@ -141,11 +133,15 @@ export default function MotivationOverlay({ holiday, now, isOpen, onClose }) {
               {!isToday && (
                 <div className="mt-2 flex items-start gap-1 text-[9px] text-stone-500 dark:text-stone-400 text-center leading-snug">
                   <Briefcase className="w-2.5 h-2.5 text-stone-400 dark:text-stone-500 shrink-0 mt-px" />
-                  <span>
-                    <strong className="text-stone-700 dark:text-stone-300">{workStats.workDays}</strong>{' '}
-                    working shifts remaining
-                    {workStats.weekendDays > 0 ? ` (+${workStats.weekendDays} weekend days)` : ''}
-                  </span>
+                  <div className="leading-snug">
+                    <span>
+                      <strong className="text-stone-700 dark:text-stone-300">{workStats.workDays}</strong>{' '}
+                      working shifts remaining
+                    </span>
+                    {workStats.weekendDays > 0 && (
+                      <div>(+{workStats.weekendDays} weekend days)</div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
