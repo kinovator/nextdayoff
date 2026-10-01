@@ -23,6 +23,7 @@ nextdayoff/
 │   │   ├── RegionSelector.jsx     # Country tabs + region picker with GPS detection
 │   │   ├── HeroCountdown.jsx      # Main real-time countdown clock + action bar
 │   │   ├── HolidayList.jsx        # Chronological list with year filters
+│   │   ├── HolidayCalendar.jsx    # Month-by-month calendar view of holidays
 │   │   ├── HolidayDetailModal.jsx # Holiday details & statutory observance matrix
 │   │   ├── MotivationOverlay.jsx  # First-arrival motivational message overlay
 │   │   ├── ReminderPrompt.jsx     # Opt-in strip for holiday reminders

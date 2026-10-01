@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Header from './components/Header';
 import HeroCountdown from './components/HeroCountdown';
 import HolidayList from './components/HolidayList';
+import HolidayCalendar from './components/HolidayCalendar';
 import RegionSelector from './components/RegionSelector';
 import HolidayDetailModal from './components/HolidayDetailModal';
 import InstallBanner from './components/InstallBanner';
@@ -35,6 +36,9 @@ import {
   syncReminderPlan,
 } from './utils/reminderPlan';
 import { detectRegionFromGeolocation, detectRegionFromTimezone } from './utils/geoUtils';
+
+// Swipe/segmented tab order — index drives the slide transform
+const TAB_ORDER = ['countdown', 'upcoming', 'calendar'];
 
 export default function App() {
   const [selectedRegion, setSelectedRegion] = useState(() => getStoredRegion(DEFAULT_REGION_CODE));
@@ -81,12 +85,13 @@ export default function App() {
 
     // Must be a predominantly horizontal swipe
     if (Math.abs(diffX) > 50 && Math.abs(diffY) < 70) {
-      if (diffX > 0 && activeTab === 'countdown') {
-        // Swiped Left on Countdown -> Go to Upcoming
-        setActiveTab('upcoming');
-      } else if (diffX < 0 && activeTab === 'upcoming') {
-        // Swiped Right on Upcoming -> Return to Countdown
-        setActiveTab('countdown');
+      const idx = TAB_ORDER.indexOf(activeTab);
+      if (diffX > 0 && idx < TAB_ORDER.length - 1) {
+        // Swiped left -> next tab
+        setActiveTab(TAB_ORDER[idx + 1]);
+      } else if (diffX < 0 && idx > 0) {
+        // Swiped right -> previous tab
+        setActiveTab(TAB_ORDER[idx - 1]);
       }
     }
 
@@ -192,6 +197,9 @@ export default function App() {
 
   const nextHoliday = getNextHoliday(selectedRegion, includeOptional, now);
   const upcomingHolidays = getUpcomingHolidays(selectedRegion, includeOptional, 15, now);
+  // Calendar browses further ahead than the reminder-backed list (15) — a
+  // year+ of markers without bloating the reminder plan synced to the worker
+  const calendarHolidays = getUpcomingHolidays(selectedRegion, includeOptional, 60, now);
 
   /**
    * Holiday reminder scheduler: checks on mount, every 15 minutes while open,
@@ -289,7 +297,10 @@ export default function App() {
         onOpenInfoModal={() => setIsInfoModalOpen(true)}
         activeTab={activeTab}
         onToggleTab={() =>
-          setActiveTab((prev) => (prev === 'countdown' ? 'upcoming' : 'countdown'))
+          setActiveTab((prev) => {
+            const idx = TAB_ORDER.indexOf(prev);
+            return TAB_ORDER[(idx + 1) % TAB_ORDER.length];
+          })
         }
         isDetectingLocation={isDetectingLocation}
       />
@@ -343,7 +354,7 @@ export default function App() {
 
           {/* Segmented View Switcher & Swipe Dots */}
           <div className="flex items-center justify-between gap-2 mb-3 px-0.5">
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 overflow-x-auto scrollbar-none">
               <div className="inline-flex p-0.5 bg-stone-200/70 dark:bg-stone-800/80 rounded-2xl border border-stone-300/40 dark:border-stone-700/50 text-xs">
                 <button
                   onClick={() => setActiveTab('countdown')}
@@ -365,28 +376,33 @@ export default function App() {
                 >
                   📅 Upcoming
                 </button>
+                <button
+                  onClick={() => setActiveTab('calendar')}
+                  className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
+                    activeTab === 'calendar'
+                      ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
+                      : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
+                  }`}
+                >
+                  🗓 Calendar
+                </button>
               </div>
             </div>
 
-            {/* Pagination Dots */}
-            <div className="flex items-center gap-1.5 shrink-0">
+          {/* Pagination Dots */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {TAB_ORDER.map((tab) => (
               <span
-                onClick={() => setActiveTab('countdown')}
+                key={tab}
+                onClick={() => setActiveTab(tab)}
                 className={`h-2 rounded-full cursor-pointer transition-all ${
-                  activeTab === 'countdown'
+                  activeTab === tab
                     ? 'bg-amber-500 w-4'
                     : 'bg-stone-300 dark:bg-stone-700 w-2'
                 }`}
               />
-              <span
-                onClick={() => setActiveTab('upcoming')}
-                className={`h-2 rounded-full cursor-pointer transition-all ${
-                  activeTab === 'upcoming'
-                    ? 'bg-amber-500 w-4'
-                    : 'bg-stone-300 dark:bg-stone-700 w-2'
-                }`}
-              />
-            </div>
+            ))}
+          </div>
           </div>
 
           {/* Swipeable View Container */}
@@ -398,8 +414,7 @@ export default function App() {
             <div
               className="flex w-full transition-transform duration-300 ease-out"
               style={{
-                transform:
-                  activeTab === 'countdown' ? 'translateX(0%)' : 'translateX(-100%)',
+                transform: `translateX(-${TAB_ORDER.indexOf(activeTab) * 100}%)`,
               }}
             >
               {/* Slide 1: Hero Countdown */}
@@ -419,6 +434,17 @@ export default function App() {
               <div className="w-full shrink-0">
                 <HolidayList
                   holidays={upcomingHolidays}
+                  selectedRegion={selectedRegion}
+                  now={now}
+                  onSelectHoliday={(h) => setSelectedHolidayForModal(h)}
+                  onBackToCountdown={() => setActiveTab('countdown')}
+                />
+              </div>
+
+              {/* Slide 3: Calendar */}
+              <div className="w-full shrink-0">
+                <HolidayCalendar
+                  holidays={calendarHolidays}
                   selectedRegion={selectedRegion}
                   now={now}
                   onSelectHoliday={(h) => setSelectedHolidayForModal(h)}
