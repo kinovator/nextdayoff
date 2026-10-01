@@ -9,6 +9,7 @@ import InstallBanner from './components/InstallBanner';
 import InfoModal from './components/InfoModal';
 import MotivationOverlay from './components/MotivationOverlay';
 import ReminderPrompt from './components/ReminderPrompt';
+import FxTestPanel from './components/FxTestPanel';
 
 import { REGIONS, getRegionByCode, DEFAULT_REGION_CODE } from './data/regions';
 import { getNextHoliday, getUpcomingHolidays } from './utils/dateUtils';
@@ -39,6 +40,9 @@ import { detectRegionFromGeolocation, detectRegionFromTimezone } from './utils/g
 
 // Swipe/segmented tab order — index drives the slide transform
 const TAB_ORDER = ['countdown', 'upcoming', 'calendar'];
+
+// TEMP: set to false to hide the celebration FX test panel (🧪, bottom-left)
+const FX_TEST_PANEL = false;
 
 export default function App() {
   const [selectedRegion, setSelectedRegion] = useState(() => getStoredRegion(DEFAULT_REGION_CODE));
@@ -462,6 +466,9 @@ export default function App() {
             <span>🌍</span>
           </p>
         </footer>
+
+        {/* TEMP: FX test panel — flip this flag to hide it again */}
+        {FX_TEST_PANEL && <FxTestPanel />}
       </main>
 
       {/* First-arrival motivational overlay (auto-closes; celebration fires after) */}
