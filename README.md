@@ -7,7 +7,7 @@
 - **Live Countdown Ticker:** Real-time ticker counting down Days, Hours, Minutes, and Seconds to your next statutory holiday.
 - **Location Aware:** One-tap GPS auto-detection with automatic fallback to system timezones (e.g. `America/Vancouver`, `America/Toronto`, `America/New_York`, `America/Chicago`, etc.).
 - **Jurisdiction Coverage:** Canada — all 10 provinces, 3 territories, and the Federal jurisdiction (banks, airlines, telecom, federal public service). United States — all 50 states, DC, and federal holidays.
-- **Country Switcher:** Quick country tabs plus region quick-switch chips in the region picker; the header badge always reflects the active country.
+- **Country Switcher:** Quick country tabs plus region quick-switch chips in the region picker; the header badge always reflects the active country (flag + code on phone widths, full country name from 640px up, matching the quick region chip bar that appears at the same breakpoint).
 - **Working-Days Estimator:** Computes remaining Monday-to-Friday work shifts before the holiday, accounting for weekends and including today's shift until 6pm local time.
 - **Upcoming Holidays Dashboard:** Filterable chronological list of holidays with year filters ordered current year, next year, then All — highlighting mandatory statutory holidays vs. optional civic holidays.
 - **Observance Matrix:** Tap any holiday to see statutory rules and holiday status across every region in the selected country.
@@ -17,7 +17,7 @@
 - **Install Prompt:** Customized install instructions for both iOS (Safari) and Android / Chromium browsers.
 - **Motivational Overlay:** A message-first overlay shown on first arrival (and re-openable from the countdown page) with the motivational message and days left — auto-closes, then triggers the celebration.
 - **Tiered Celebrations:** Time-remaining-based effects that escalate as the day off approaches — grand confetti on the day itself, fireworks at 1–3 days, rocket streaks at 4–5 days, and a gentle shimmer within a week — with a matching hero-card flash.
-- **Holiday Reminders:** Opt-in reminders 48 hours before your next statutory day off, de-duplicated per holiday. Tapping the notification brings the installed app back to the front.
+- **Holiday Reminders:** Opt-in reminders a week and 48 hours before your next statutory day off, de-duplicated per holiday and milestone. Tapping the notification brings the installed app back to the front. On Android/Chromium the installed app also checks in the background (Periodic Background Sync), so reminders arrive with the app fully closed — no account, no server; other browsers check while the app is open, and the info panel states which applies.
 - **Aesthetics & Theme:** Clean, neutral palette with warm stone accents and dark/light mode toggle. Compliant with mobile hardware safe areas (`env(safe-area-inset-*)`).
 
 ## Tech Stack

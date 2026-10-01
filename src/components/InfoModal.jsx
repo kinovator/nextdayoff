@@ -1,10 +1,26 @@
 import { X, ShieldCheck, Bell } from 'lucide-react';
+import { describeReminderOffsets } from '../utils/notifications';
+
+/**
+ * How reminders reach this device, mirroring the result of registering
+ * periodic background sync in utils/reminderPlan.js. Never promise background
+ * delivery the browser cannot do.
+ */
+const BACKGROUND_STATUS_COPY = {
+  registered:
+    'Background reminders are active on this device — they arrive even when the app is closed.',
+  unavailable:
+    'Reminders are checked while the app is open. Install the app and launch it once to enable background reminders.',
+  unsupported: 'This browser only checks reminders while the app is open.',
+  unknown: 'Reminders are checked while the app is open.',
+};
 
 export default function InfoModal({
   isOpen,
   onClose,
   remindersEnabled = false,
   notificationPermission = 'default',
+  backgroundReminders = 'unknown',
   onToggleReminders = () => {},
 }) {
   if (!isOpen) return null;
@@ -12,6 +28,9 @@ export default function InfoModal({
   const isSupported = notificationPermission !== 'unsupported';
   const isBlocked = notificationPermission === 'denied';
   const canToggle = isSupported && !isBlocked;
+  const scheduleLabel = describeReminderOffsets();
+  const backgroundStatus =
+    BACKGROUND_STATUS_COPY[backgroundReminders] || BACKGROUND_STATUS_COPY.unknown;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-stone-900/60 backdrop-blur-sm animate-in fade-in duration-200">
@@ -68,8 +87,14 @@ export default function InfoModal({
                   <span>Holiday Reminders</span>
                 </h4>
                 <p className="text-[11px] text-stone-600 dark:text-stone-400 leading-normal mt-1">
-                  A notification 48 hours before your next statutory day off. Reminders are checked while the app is open or installed.
+                  Notifications {scheduleLabel} before your next statutory day off, so there is
+                  time to plan the time off.
                 </p>
+                {remindersEnabled && (
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 leading-normal mt-1">
+                    {backgroundStatus}
+                  </p>
+                )}
                 {isBlocked && (
                   <p className="text-[11px] text-red-600 dark:text-red-400 leading-normal mt-1">
                     Notifications are blocked for this site. Allow them in your browser settings to switch reminders on.

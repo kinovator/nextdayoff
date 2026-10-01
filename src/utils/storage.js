@@ -82,13 +82,15 @@ export function setStoredRemindersEnabled(val) {
   }
 }
 
-const NOTIFIED_LIMIT = 25;
+const NOTIFIED_LIMIT = 60;
 
 /**
- * Holiday ids already reminded about, newest first. Keeps reminders to one
- * per holiday even across reloads.
+ * Reminder milestones already sent, newest first — `holidayId@offsetDays` keys,
+ * or a bare holiday id to mute every milestone for that holiday. Keeps a
+ * holiday from being announced twice, both across reloads and across the in-app
+ * and background delivery paths.
  */
-export function getNotifiedHolidayIds() {
+export function getNotifiedKeys() {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.NOTIFIED);
     const parsed = raw ? JSON.parse(raw) : [];
@@ -98,15 +100,31 @@ export function getNotifiedHolidayIds() {
   }
 }
 
-export function markHolidayNotified(holidayId) {
-  if (!holidayId) return;
+/**
+ * Marks one or more milestone keys as sent, keeping the newest first.
+ */
+export function markNotifiedKeys(keys) {
+  const list = (Array.isArray(keys) ? keys : [keys]).filter(Boolean);
+  if (!list.length) return;
   try {
-    const next = [holidayId, ...getNotifiedHolidayIds().filter((id) => id !== holidayId)].slice(
-      0,
-      NOTIFIED_LIMIT
-    );
+    const next = [
+      ...list,
+      ...getNotifiedKeys().filter((key) => !list.includes(key)),
+    ].slice(0, NOTIFIED_LIMIT);
     localStorage.setItem(STORAGE_KEYS.NOTIFIED, JSON.stringify(next));
   } catch (e) {
-    console.warn('Could not persist notified holiday', e);
+    console.warn('Could not persist notified holidays', e);
   }
+}
+
+/**
+ * Merges milestones delivered elsewhere (e.g. by the service worker while the
+ * app was closed) into the local list. Returns the keys that were new, so the
+ * caller can tell whether someone else already sent this reminder.
+ */
+export function mergeNotifiedKeys(keys) {
+  const known = getNotifiedKeys();
+  const added = (Array.isArray(keys) ? keys : []).filter((key) => key && !known.includes(key));
+  if (added.length) markNotifiedKeys(added);
+  return added;
 }

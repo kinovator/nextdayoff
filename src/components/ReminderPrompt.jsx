@@ -7,7 +7,11 @@ const DISMISS_KEY = 'reminder_prompt_dismissed';
  * One-time opt-in strip for holiday reminders. Hidden once reminders are
  * enabled, and dismissible for the rest of the session (mirrors InstallBanner).
  */
-export default function ReminderPrompt({ isVisible, holidayName, onEnable }) {
+export default function ReminderPrompt({
+  isVisible,
+  leadTimeLabel = '',
+  onEnable,
+}) {
   const [isDismissed, setIsDismissed] = useState(() => {
     try {
       return sessionStorage.getItem(DISMISS_KEY) === 'true';
@@ -17,6 +21,8 @@ export default function ReminderPrompt({ isVisible, holidayName, onEnable }) {
   });
 
   if (!isVisible || isDismissed) return null;
+
+  const lead = leadTimeLabel ? ` ${leadTimeLabel}` : '';
 
   const handleDismiss = () => {
     setIsDismissed(true);
@@ -35,9 +41,8 @@ export default function ReminderPrompt({ isVisible, holidayName, onEnable }) {
           Never miss a day off
         </p>
         <p className="text-[11px] text-stone-600 dark:text-stone-400 leading-snug mt-0.5">
-          {holidayName
-            ? `Get a heads-up 48 hours before ${holidayName} and every day off after that.`
-            : 'Get a heads-up 48 hours before your next statutory holiday.'}
+          Get a heads-up{lead} before every statutory holiday, so you can plan
+          the time off.
         </p>
         <button
           onClick={onEnable}

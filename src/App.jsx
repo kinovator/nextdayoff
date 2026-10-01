@@ -24,10 +24,16 @@ import {
 import {
   REMINDER_CHECK_INTERVAL_MS,
   checkAndSendReminder,
+  describeReminderOffsets,
   getNotificationPermission,
   isNotificationSupported,
   requestNotificationPermission,
 } from './utils/notifications';
+import {
+  markReminderPlanNotified,
+  mergeBackgroundReminderNotifications,
+  syncReminderPlan,
+} from './utils/reminderPlan';
 import { detectRegionFromGeolocation, detectRegionFromTimezone } from './utils/geoUtils';
 
 export default function App() {
@@ -45,11 +51,14 @@ export default function App() {
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [locationFeedback, setLocationFeedback] = useState('');
 
-  // Holiday reminders (48h heads-up, see utils/notifications.js)
+  // Holiday reminders (a week ahead and 48h ahead, see utils/notifications.js)
   const [remindersEnabled, setRemindersEnabled] = useState(() => getStoredRemindersEnabled());
   const [notificationPermission, setNotificationPermission] = useState(() =>
     getNotificationPermission()
   );
+  // Result of registering periodic background sync: 'registered' (reminders
+  // arrive with the app closed), 'unavailable', 'unsupported', or 'unknown'.
+  const [backgroundReminderSync, setBackgroundReminderSync] = useState('unknown');
 
   // First-arrival motivational overlay (auto-closes, see MotivationOverlay)
   const [isWelcomeOpen, setIsWelcomeOpen] = useState(true);
@@ -186,21 +195,31 @@ export default function App() {
 
   /**
    * Holiday reminder scheduler: checks on mount, every 15 minutes while open,
-   * and whenever the app returns to the foreground. Deduplicated per holiday
-   * inside checkAndSendReminder, so nothing fires twice.
+   * and whenever the app returns to the foreground. De-duplicated per holiday
+   * and milestone inside checkAndSendReminder, so nothing fires twice — including
+   * against reminders the service worker sent while the app was closed.
    */
   useEffect(() => {
     if (!remindersEnabled || !nextHoliday) return undefined;
 
     let cancelled = false;
     const run = async () => {
+      // Absorb anything the background worker delivered while we were away
+      // before deciding what still needs sending.
+      await mergeBackgroundReminderNotifications();
+
       const result = await checkAndSendReminder({
         holiday: nextHoliday,
         region: getRegionByCode(selectedRegion),
         enabled: true,
       });
-      if (!cancelled && result.status === 'sent') {
-        console.info(`Holiday reminder sent for ${nextHoliday.id}`);
+      if (cancelled) return;
+
+      if (result.status === 'sent') {
+        console.info(
+          `Holiday reminder sent for ${nextHoliday.id} (${result.offsetDays} days before)`
+        );
+        await markReminderPlanNotified(result.sentKeys);
       }
     };
 
@@ -218,6 +237,39 @@ export default function App() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remindersEnabled, nextHoliday && nextHoliday.id, selectedRegion]);
+
+  /**
+   * Publishes the reminder plan (IndexedDB) the service worker replays when the
+   * app is closed, registers periodic background sync, and keeps both in step
+   * with the region, optional-holiday and reminder settings.
+   */
+  useEffect(() => {
+    let cancelled = false;
+
+    const sync = async () => {
+      const result = await syncReminderPlan({
+        regionCode: selectedRegion,
+        holidays: upcomingHolidays,
+        enabled: remindersEnabled,
+        includeOptional,
+      });
+      if (!cancelled) setBackgroundReminderSync(result.backgroundSync);
+    };
+
+    sync();
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') sync();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      cancelled = true;
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+    // upcomingHolidays is recomputed from the ticking clock on every render, so
+    // it is read from the closure rather than listed as a dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [remindersEnabled, selectedRegion, includeOptional]);
 
   // Quick switch chips for common regions of the current country
   const selectedCountry = getRegionByCode(selectedRegion).country;
@@ -253,12 +305,14 @@ export default function App() {
               isNotificationSupported() &&
               notificationPermission !== 'denied'
             }
-            holidayName={nextHoliday ? nextHoliday.name : ''}
+            leadTimeLabel={describeReminderOffsets()}
             onEnable={handleToggleReminders}
           />
 
-          {/* Quick Region Selector Bar */}
-          <div className="flex items-center justify-between gap-1.5 mb-3 overflow-x-auto pb-1 scrollbar-none">
+          {/* Quick Region Selector Bar — shown from sm up. On phones the five
+              chips plus "All N+" cannot fit, so location switching happens via
+              the header location button (which opens this same picker) */}
+          <div className="hidden sm:flex items-center justify-between gap-1.5 mb-3 overflow-x-auto pb-1 scrollbar-none">
             <div className="flex items-center gap-1.5">
               {quickChips.map((code) => {
                 const p = getRegionByCode(code);
@@ -422,6 +476,7 @@ export default function App() {
         onClose={() => setIsInfoModalOpen(false)}
         remindersEnabled={remindersEnabled}
         notificationPermission={notificationPermission}
+        backgroundReminders={backgroundReminderSync}
         onToggleReminders={handleToggleReminders}
       />
     </div>
