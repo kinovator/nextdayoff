@@ -34,7 +34,8 @@ nextdayoff/
 │   │   ├── holidays.js            # Canadian statutory holiday data
 │   │   └── holidaysUS.js          # US federal holiday data (merged into HOLIDAYS)
 │   ├── utils/
-│   │   ├── dateUtils.js           # Countdown math, working-day counting, filtering
+│   │   ├── dateUtils.js           # Countdown math, working-day counting, filtering,
+│   │   │                           # shared tier keys + month-name constants
 │   │   ├── geoUtils.js            # GPS proximity + timezone-based region detection
 │   │   ├── celebrations.js        # Tiered effect presets and dispatcher
 │   │   ├── notifications.js       # Reminder milestones, de-dupe, notification delivery
@@ -42,6 +43,7 @@ nextdayoff/
 │   │   ├── motivationalMessages.js # Message pools keyed by time-remaining tier
 │   │   └── storage.js             # localStorage helpers
 │   ├── App.jsx                    # Main application layout & state container
+│   ├── tabs.js                    # Single source of truth for view tabs (order, labels, icons)
 │   ├── main.jsx                   # React entry point + service worker registration
 │   └── index.css                  # Tailwind directives & custom CSS
 ├── docs/                          # Architecture, data schema, roadmap, dev guide

@@ -10,6 +10,7 @@ import InfoModal from './components/InfoModal';
 import MotivationOverlay from './components/MotivationOverlay';
 import ReminderPrompt from './components/ReminderPrompt';
 import FxTestPanel from './components/FxTestPanel';
+import { TAB_META, TAB_ORDER, getNextTab } from './tabs';
 
 import { REGIONS, getRegionByCode, DEFAULT_REGION_CODE } from './data/regions';
 import { getNextHoliday, getUpcomingHolidays } from './utils/dateUtils';
@@ -38,9 +39,6 @@ import {
 } from './utils/reminderPlan';
 import { detectRegionFromGeolocation, detectRegionFromTimezone } from './utils/geoUtils';
 
-// Swipe/segmented tab order — index drives the slide transform
-const TAB_ORDER = ['countdown', 'upcoming', 'calendar'];
-
 // TEMP: set to false to hide the celebration FX test panel (🧪, bottom-left)
 const FX_TEST_PANEL = false;
 
@@ -50,7 +48,7 @@ export default function App() {
   const [includeOptional, setIncludeOptional] = useState(() => getStoredIncludeOptional());
   const [now, setNow] = useState(() => new Date());
 
-  // Active view: 'countdown' | 'upcoming'
+  // Active view: 'countdown' | 'upcoming' | 'calendar' (see src/tabs.js)
   const [activeTab, setActiveTab] = useState('countdown');
 
   const [isRegionModalOpen, setIsRegionModalOpen] = useState(false);
@@ -301,10 +299,7 @@ export default function App() {
         onOpenInfoModal={() => setIsInfoModalOpen(true)}
         activeTab={activeTab}
         onToggleTab={() =>
-          setActiveTab((prev) => {
-            const idx = TAB_ORDER.indexOf(prev);
-            return TAB_ORDER[(idx + 1) % TAB_ORDER.length];
-          })
+          setActiveTab((prev) => getNextTab(prev).key)
         }
         isDetectingLocation={isDetectingLocation}
       />
@@ -360,36 +355,19 @@ export default function App() {
           <div className="flex items-center justify-between gap-2 mb-3 px-0.5">
             <div className="flex-1 min-w-0 overflow-x-auto scrollbar-none">
               <div className="inline-flex p-0.5 bg-stone-200/70 dark:bg-stone-800/80 rounded-2xl border border-stone-300/40 dark:border-stone-700/50 text-xs">
-                <button
-                  onClick={() => setActiveTab('countdown')}
-                  className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
-                    activeTab === 'countdown'
-                      ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
-                      : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
-                  }`}
-                >
-                  ⏱ Countdown
-                </button>
-                <button
-                  onClick={() => setActiveTab('upcoming')}
-                  className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
-                    activeTab === 'upcoming'
-                      ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
-                      : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
-                  }`}
-                >
-                  📅 Upcoming
-                </button>
-                <button
-                  onClick={() => setActiveTab('calendar')}
-                  className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
-                    activeTab === 'calendar'
-                      ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
-                      : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
-                  }`}
-                >
-                  🗓 Calendar
-                </button>
+                {TAB_META.map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key)}
+                    className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
+                      activeTab === tab.key
+                        ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
+                        : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
               </div>
             </div>
 

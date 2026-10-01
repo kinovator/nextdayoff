@@ -11,6 +11,8 @@ import {
   formatLongDate,
   formatWeekday,
   isStatForRegion,
+  getDaysLater,
+  MONTHS_FULL,
 } from '../utils/dateUtils';
 import { getRegionByCode } from '../data/regions';
 import { triggerCelebration } from '../utils/celebrations';
@@ -42,16 +44,10 @@ export default function HeroCountdown({
 
   // Month name for calendar header
   const monthNum = holiday.date.split('-')[1];
-  const monthNames = [
-    'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
-    'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER',
-  ];
-  const holidayMonthName = monthNames[parseInt(monthNum, 10) - 1];
+  const holidayMonthName = MONTHS_FULL[parseInt(monthNum, 10) - 1];
 
   // Rounded up days to the holiday:
-  const daysLater = countdown.isToday
-    ? 0
-    : Math.max(1, Math.ceil(countdown.totalMs / (1000 * 60 * 60 * 24)));
+  const daysLater = getDaysLater(countdown);
 
   // Counter used to restart the hero card flash animation on every celebration
   const [celebrationNonce, setCelebrationNonce] = useState(0);

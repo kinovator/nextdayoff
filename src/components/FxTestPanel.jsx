@@ -4,9 +4,9 @@ import { triggerCelebration } from '../utils/celebrations';
 /**
  * TEMP test panel: replay every celebration tier from a UI list so the
  * effects can be previewed (and "felt") without waiting for the real
- * countdown. Only rendered in dev or when opened with ?fxtest.
+ * countdown. Rendered only while FX_TEST_PANEL is true in src/App.jsx.
  *
- * Tiers mirror getCelebrationTier() in src/utils/celebrations.js.
+ * Tiers mirror getTierKey() in src/utils/dateUtils.js.
  */
 const TIERS = [
   { key: 'today', label: '🎉 Finale + fireworks', hint: '0 days — today is the day off', days: 0, today: true },

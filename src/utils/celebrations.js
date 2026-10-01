@@ -1,10 +1,11 @@
 import confetti from 'canvas-confetti';
+import { getTierKey } from './dateUtils';
 
 /**
  * Tiered celebration effects for NextDayOff.
  *
  * Tier boundaries intentionally mirror the motivational-message categories
- * (see src/utils/motivationalMessages.js) so the quote and the celebration
+ * (both share getTierKey() in dateUtils.js) so the quote and the celebration
  * always belong to the same "distance" mood. Energy escalates as the day off
  * gets closer:
  *
@@ -30,8 +31,6 @@ const COLORS = {
   festive: ['#D97706', '#FAF8F5', '#F59E0B', '#10B981', '#EC4899'],
   amber: ['#F59E0B', '#FBBF24', '#D97706'],
   emerald: ['#10B981', '#34D399', '#059669'],
-  soft: ['#F59E0B', '#FBBF24', '#DCD1C0', '#C4B59F', '#A8A29E'], // unused, kept for tweaks
-  muted: ['#F59E0B', '#DCD1C0', '#A8A29E'],
 };
 
 /**
@@ -172,22 +171,6 @@ function celebrateAlmostThere() {
     angle: 90, // ...shot upward, in random directions
     angleJitter: 40, // ...with a wide +/-40° wobble each burst
     spread: 12, // tight fan — each burst reads as one aimed rocket
-  });
-}
-
-/**
- * Fallback (unmapped tier): a tiny, understated sparkle.
- */
-function celebrateSparkle() {
-  confetti({
-    particleCount: 25,
-    spread: 60,
-    startVelocity: 8,
-    gravity: 0.8,
-    ticks: 200,
-    scalar: 0.7,
-    origin: { y: 0.45 },
-    colors: COLORS.muted,
   });
 }
 
@@ -354,29 +337,15 @@ const CELEBRATION_EFFECTS = {
 };
 
 /**
- * Maps the remaining days until the day off to a celebration tier key,
- * using the same boundaries as getMotivationalMessage().
- */
-export function getCelebrationTier(daysLater, isToday = false) {
-  if (isToday || daysLater <= 0) return 'today';
-  if (daysLater <= 3) return 'upTo3Days';
-  if (daysLater <= 5) return 'upTo5Days';
-  if (daysLater <= 7) return 'upToOneWeek';
-  if (daysLater <= 14) return 'upToTwoWeeks';
-  if (daysLater <= 31) return 'upToOneMonth';
-  return 'moreThanMonth';
-}
-
-/**
- * Fires the celebration effect matching the current time remaining.
+ * Fires the celebration effect matching the current time remaining
+ * (tier boundaries shared with getMotivationalMessage via getTierKey).
  * Returns the tier key that was played (or null if it failed/was skipped),
  * so the UI can react if needed. Never throws.
  */
 export function triggerCelebration(daysLater, isToday = false) {
   try {
-    const tier = getCelebrationTier(daysLater, isToday);
-    const effect = CELEBRATION_EFFECTS[tier] || celebrateSparkle;
-    effect(daysLater);
+    const tier = getTierKey(daysLater, isToday);
+    CELEBRATION_EFFECTS[tier]();
     return tier;
   } catch (e) {
     // Celebrations must never break the UI

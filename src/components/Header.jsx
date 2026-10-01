@@ -1,5 +1,6 @@
-import { Sun, Moon, MapPin, Calendar, Clock, Info, LayoutGrid } from 'lucide-react';
+import { Sun, Moon, MapPin, Info } from 'lucide-react';
 import { getRegionByCode, getCountryForRegion } from '../data/regions';
+import { getNextTab } from '../tabs';
 
 export default function Header({
   selectedRegion,
@@ -14,15 +15,10 @@ export default function Header({
   const region = getRegionByCode(selectedRegion);
   const country = getCountryForRegion(selectedRegion);
 
-  // Cycle button: shows the icon of the tab it will switch to
-  const nextTab =
-    activeTab === 'countdown' ? 'upcoming' : activeTab === 'upcoming' ? 'calendar' : 'countdown';
-  const NEXT_TAB_META = {
-    upcoming: { icon: Calendar, label: 'Switch to Upcoming Holidays' },
-    calendar: { icon: LayoutGrid, label: 'Switch to Calendar view' },
-    countdown: { icon: Clock, label: 'Switch back to Countdown' },
-  };
-  const NextTabIcon = NEXT_TAB_META[nextTab].icon;
+  // Cycle button: shows the icon of the tab it will switch to —
+  // cycle order comes from src/tabs.js, same source the swipe/dots use
+  const nextTab = getNextTab(activeTab);
+  const NextTabIcon = nextTab.icon;
 
   return (
     <header className="sticky top-0 z-30 w-full glass-panel safe-pt border-b border-stone-200/80 dark:border-stone-800/80 transition-colors">
@@ -71,9 +67,9 @@ export default function Header({
             <span className="text-stone-400 dark:text-stone-500 text-[10px]">▼</span>
           </button>
 
-          {/* Toggle between Countdown & Upcoming Holidays — hidden on phones
-              because it is already offered by the in-page segmented switcher
-              and swipe gesture; it returns from sm up where there is room */}
+          {/* Tab-cycle button — hidden on phones because the in-page segmented
+              switcher and swipe gesture already cover navigation; it returns
+              from sm up where there is room */}
           <button
             id="header-toggle-tab-btn"
             onClick={onToggleTab}
@@ -82,12 +78,12 @@ export default function Header({
                 ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
                 : 'text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
             }`}
-            aria-label={NEXT_TAB_META[nextTab].label}
-            title={NEXT_TAB_META[nextTab].label}
+            aria-label={nextTab.cycleLabel}
+            title={nextTab.cycleLabel}
           >
             <NextTabIcon
               className={`w-4 h-4 ${
-                nextTab === 'countdown'
+                nextTab.key === 'countdown'
                   ? 'text-stone-600 dark:text-stone-300'
                   : 'text-amber-600 dark:text-amber-400'
               }`}

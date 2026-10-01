@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Sparkles, Briefcase } from 'lucide-react';
-import { calculateCountdown, countWorkingDays, formatWeekday } from '../utils/dateUtils';
+import { calculateCountdown, countWorkingDays, formatWeekday, getDaysLater, MONTHS_FULL } from '../utils/dateUtils';
 import { getMotivationalMessage } from '../utils/motivationalMessages';
 
 // Auto-close delay for the overlay.
@@ -51,20 +51,12 @@ export default function MotivationOverlay({ holiday, now, isOpen, onClose }) {
   }, [isOpen]);
 
   const countdown = holiday ? calculateCountdown(holiday.date, now) : null;
-  const daysLater = countdown
-    ? countdown.isToday
-      ? 0
-      : Math.max(1, Math.ceil(countdown.totalMs / (1000 * 60 * 60 * 24)))
-    : null;
+  const daysLater = getDaysLater(countdown);
   const isToday = Boolean(countdown && countdown.isToday);
 
   // Calendar frame details (mirrors the hero's physical calendar design)
-  const monthNames = [
-    'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
-    'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER',
-  ];
   const holidayMonthName = holiday
-    ? monthNames[parseInt(holiday.date.split('-')[1], 10) - 1]
+    ? MONTHS_FULL[parseInt(holiday.date.split('-')[1], 10) - 1]
     : '';
   const weekday = holiday ? formatWeekday(holiday.date) : '';
   const workStats = holiday

@@ -5,6 +5,7 @@ import {
   formatWeekday,
   isStatForRegion,
   getLocalDateString,
+  MONTHS_ABBR,
 } from '../utils/dateUtils';
 
 export default function HolidayList({
@@ -113,11 +114,7 @@ export default function HolidayList({
             const weekday = formatWeekday(holiday.date);
 
             const [year, monthNum, dayNum] = holiday.date.split('-');
-            const monthNames = [
-              'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-            ];
-            const monthName = monthNames[parseInt(monthNum, 10) - 1];
+            const monthName = MONTHS_ABBR[parseInt(monthNum, 10) - 1];
 
             return (
               <div

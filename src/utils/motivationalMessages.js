@@ -9,7 +9,11 @@
  * - 8-14 days (approx 2 weeks)
  * - 15-31 days (approx 1 month)
  * - > 31 days (> 1 month)
+ *
+ * Boundaries come from getTierKey() in dateUtils.js, shared with the
+ * celebration FX so both systems always bucket the same way.
  */
+import { getTierKey } from './dateUtils';
 
 const MOTIVATIONAL_MESSAGES = {
   today: [
@@ -69,23 +73,7 @@ const MOTIVATIONAL_MESSAGES = {
  * get fresh messages each time.
  */
 export function getMotivationalMessage(daysLater, isToday = false) {
-  let categoryKey;
-
-  if (isToday || daysLater <= 0) {
-    categoryKey = 'today';
-  } else if (daysLater <= 3) {
-    categoryKey = 'upTo3Days';
-  } else if (daysLater <= 5) {
-    categoryKey = 'upTo5Days';
-  } else if (daysLater <= 7) {
-    categoryKey = 'upToOneWeek';
-  } else if (daysLater <= 14) {
-    categoryKey = 'upToTwoWeeks';
-  } else if (daysLater <= 31) {
-    categoryKey = 'upToOneMonth';
-  } else {
-    categoryKey = 'moreThanMonth';
-  }
+  const categoryKey = getTierKey(daysLater, isToday);
 
   const messages = MOTIVATIONAL_MESSAGES[categoryKey];
 

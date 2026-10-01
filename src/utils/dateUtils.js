@@ -200,3 +200,48 @@ export function formatWeekday(dateStr) {
   const date = new Date(y, m - 1, d);
   return date.toLocaleDateString('en-CA', { weekday: 'long' });
 }
+
+// ---------------------------------------------------------------------------
+// Shared helpers: single source of truth for month names, the days-remaining
+// rounding, and the distance tiers used by both motivational messages and
+// celebration FX (see motivationalMessages.js / celebrations.js).
+// ---------------------------------------------------------------------------
+
+/** Full month names, uppercase ("JANUARY") — for calendar-frame headers. */
+export const MONTHS_FULL = [
+  'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
+  'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER',
+];
+
+/** Abbreviated month names ("Jan") — for compact list cells. */
+export const MONTHS_ABBR = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+/**
+ * Rounded-up whole days remaining from a calculateCountdown() result:
+ * 0 when the day off is today, at least 1 otherwise. Null-safe — returns
+ * null when the countdown is null, so callers can pass it straight through.
+ */
+export function getDaysLater(countdown) {
+  if (!countdown) return null;
+  if (countdown.isToday) return 0;
+  return Math.max(1, Math.ceil(countdown.totalMs / (1000 * 60 * 60 * 24)));
+}
+
+/**
+ * Maps the remaining days until the day off to a shared tier key:
+ * today | upTo3Days | upTo5Days | upToOneWeek | upToTwoWeeks | upToOneMonth |
+ * moreThanMonth. Used by both getMotivationalMessage() and the celebration FX
+ * so the two systems' boundaries never drift apart.
+ */
+export function getTierKey(daysLater, isToday = false) {
+  if (isToday || daysLater <= 0) return 'today';
+  if (daysLater <= 3) return 'upTo3Days';
+  if (daysLater <= 5) return 'upTo5Days';
+  if (daysLater <= 7) return 'upToOneWeek';
+  if (daysLater <= 14) return 'upToTwoWeeks';
+  if (daysLater <= 31) return 'upToOneMonth';
+  return 'moreThanMonth';
+}
