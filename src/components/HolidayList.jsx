@@ -156,7 +156,7 @@ export default function HolidayList({
                       <span>•</span>
                       <span>{formatMediumDate(holiday.date)}</span>
                       {holiday.longWeekend && (
-                        <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                        <span className="text-weekend font-semibold">
                           • Long Weekend
                         </span>
                       )}

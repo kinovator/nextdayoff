@@ -55,7 +55,7 @@ export default function HolidayDetailModal({
                   isMandatoryHere
                     ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/70 dark:text-amber-300'
                     : isOptionalHere
-                    ? 'bg-blue-100 text-blue-900 dark:bg-blue-950/70 dark:text-blue-300'
+                    ? 'pill-civic'
                     : 'bg-stone-200 text-stone-700 dark:bg-stone-700 dark:text-stone-300'
                 }`}
               >
@@ -67,7 +67,7 @@ export default function HolidayDetailModal({
               </span>
 
               {holiday.longWeekend && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold pill-weekend">
                   Long Weekend
                 </span>
               )}
@@ -145,7 +145,7 @@ export default function HolidayDetailModal({
                         isStat
                           ? 'bg-amber-100 text-amber-900 dark:bg-amber-900/60 dark:text-amber-300'
                           : isOpt
-                          ? 'bg-blue-100 text-blue-900 dark:bg-blue-900/60 dark:text-blue-300'
+                          ? 'pill-civic'
                           : 'bg-stone-100 text-stone-400 dark:bg-stone-700 dark:text-stone-400'
                       }`}
                     >

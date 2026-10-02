@@ -12,6 +12,7 @@ import ReminderPrompt from './components/ReminderPrompt';
 import FxTestPanel from './components/FxTestPanel';
 import ThemePickerModal from './components/ThemePickerModal';
 import { TAB_META, TAB_ORDER, getNextTab } from './tabs';
+import { getFontById } from './themes';
 
 import { REGIONS, getRegionByCode, DEFAULT_REGION_CODE } from './data/regions';
 import { getNextHoliday, getUpcomingHolidays } from './utils/dateUtils';
@@ -20,6 +21,8 @@ import {
   setStoredRegion,
   getStoredTheme,
   setStoredTheme,
+  getStoredFont,
+  setStoredFont,
   getStoredIncludeOptional,
   setStoredIncludeOptional,
   getStoredRemindersEnabled,
@@ -45,10 +48,12 @@ const FX_TEST_PANEL = false;
 
 export default function App() {
   const [selectedRegion, setSelectedRegion] = useState(() => getStoredRegion(DEFAULT_REGION_CODE));
-  // Active theme (see src/themes.js) — a complete look (accent + neutral ramps,
-  // surfaces, font) applied via [data-theme] on <html>. The `dark` theme also
-  // sets the `dark` class that the app's `dark:` utilities key off.
+  // Active theme (see src/themes.js) — colours only (accent + neutral ramps,
+  // surfaces), applied via [data-theme] on <html>. The `dark` theme also sets
+  // the `dark` class that the app's `dark:` utilities key off.
   const [themeId, setThemeId] = useState(() => getStoredTheme());
+  // Display font (src/themes.js FONTS) — chosen independently of the theme.
+  const [fontId, setFontId] = useState(() => getStoredFont());
   const [includeOptional, setIncludeOptional] = useState(() => getStoredIncludeOptional());
   const [now, setNow] = useState(() => new Date());
 
@@ -106,15 +111,25 @@ export default function App() {
     touchStartY.current = null;
   };
 
-  // Apply the active theme: `data-theme` carries the ramps, page/surface tints
-  // and font; the `dark` class (set only by the dark theme) drives every
-  // `dark:` utility. Both live on <html> and are persisted here.
+  // Apply the active theme: `data-theme` carries the ramps and page/surface
+  // tints; the `dark` class (set only by the dark theme) drives every `dark:`
+  // utility. Both live on <html> and are persisted here.
   useEffect(() => {
     const root = document.documentElement;
     root.dataset.theme = themeId;
     root.classList.toggle('dark', themeId === 'dark');
     setStoredTheme(themeId);
   }, [themeId]);
+
+  // Apply the active font: its stack becomes `--app-font` on <html>, which
+  // html/body/.font-sans all inherit — so the font changes app-wide and stays
+  // independent of whichever theme is selected.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset.font = fontId;
+    root.style.setProperty('--app-font', getFontById(fontId).stack);
+    setStoredFont(fontId);
+  }, [fontId]);
 
   // Real-time second clock ticker
   useEffect(() => {
@@ -501,12 +516,14 @@ export default function App() {
         onToggleReminders={handleToggleReminders}
       />
 
-      {/* Color + font theme picker */}
+      {/* Colour + font picker (independent choices) */}
       <ThemePickerModal
         isOpen={isThemePickerOpen}
         onClose={() => setIsThemePickerOpen(false)}
         selectedId={themeId}
         onSelect={setThemeId}
+        selectedFontId={fontId}
+        onSelectFont={setFontId}
       />
     </div>
   );
