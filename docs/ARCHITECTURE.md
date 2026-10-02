@@ -6,7 +6,7 @@
 - **Icons:** `lucide-react`.
 - **Celebrations:** `canvas-confetti` (tiered, time-remaining-based effects).
 - **PWA Capabilities:** `vite-plugin-pwa` (generates `manifest.webmanifest` and Workbox service worker).
-- **State Management:** Local component state + `localStorage` for user preferences (region, theme, optional holidays, sent reminder milestones) and IndexedDB for the reminder plan shared with the service worker. A theme (`src/themes.js`) is the complete look — accent ramp, neutral ramp, page/surface tints and display font — selected by a single `data-theme` attribute on `<html>`; `dark` is one of the themes rather than a separate switch, and it is the only one that adds the `dark` class the app's `dark:` utilities key off. Both ramps are CSS variables consumed by Tailwind's `amber` (accent) and `stone` (neutral) scales, so switching a theme recolors every accent and neutral utility at once.
+- **State Management:** Local component state + `localStorage` for user preferences (region, theme, font, optional holidays, sent reminder milestones) and IndexedDB for the reminder plan shared with the service worker. A theme (`src/themes.js`) is a colour package — accent ramp, neutral ramp, page/surface tints — selected by a single `data-theme` attribute on `<html>`; `dark` is one of the themes rather than a separate switch, and it is the only one that adds the `dark` class the app's `dark:` utilities key off. Both ramps are CSS variables consumed by Tailwind's `amber` (accent) and `stone` (neutral) scales, so switching a theme recolors every accent and neutral utility at once. The display font is an independent choice (`FONTS` in `src/themes.js`, `data-font`/`--app-font` on `<html>`), so any font pairs with any theme. Status-pill colours are themed vars too (`--weekend-*` for the Long Weekend pill, `--civic-*` for the Civic/Optional pill) so they shift with the palette instead of clashing with a theme's accent.
 - **Data Layer:** A flat multi-country region registry (`src/data/regions.js`) plus per-country holiday modules merged into a single dataset, so adding a country requires no UI changes.
 
 ## Directory Structure
@@ -26,7 +26,7 @@ nextdayoff/
 │   │   ├── HolidayCalendar.jsx    # Month-by-month calendar view of holidays
 │   │   ├── HolidayDetailModal.jsx # Holiday details & statutory observance matrix
 │   │   ├── MotivationOverlay.jsx  # First-arrival motivational message overlay
-│   │   ├── ThemePickerModal.jsx   # Color + font theme picker (pick your vibe)
+│   │   ├── ThemePickerModal.jsx   # Colour + font picker (independent choices)
 │   │   ├── ReminderPrompt.jsx     # Opt-in strip for holiday reminders
 │   │   ├── InfoModal.jsx          # Rules reference + reminder toggle
 │   │   └── InstallBanner.jsx      # PWA install prompt

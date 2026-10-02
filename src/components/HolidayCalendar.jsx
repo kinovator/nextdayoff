@@ -240,7 +240,7 @@ export default function HolidayCalendar({
                     <span>•</span>
                     <span>{formatMediumDate(holiday.date)}</span>
                     {holiday.longWeekend && (
-                      <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                      <span className="text-weekend font-semibold">
                         • Long Weekend
                       </span>
                     )}
@@ -262,7 +262,7 @@ export default function HolidayCalendar({
                       isStat
                         ? 'text-amber-600 dark:text-amber-400'
                         : isOptional
-                        ? 'text-blue-600 dark:text-blue-400'
+                        ? 'text-civic'
                         : 'text-stone-400 dark:text-stone-400'
                     }`}
                   >

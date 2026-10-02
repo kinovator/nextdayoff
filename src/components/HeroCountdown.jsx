@@ -126,7 +126,7 @@ export default function HeroCountdown({
             {isMandatoryStat ? 'Stat Holiday' : 'Optional / Civic'}
           </span>
           {holiday.longWeekend && (
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300/40">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold pill-weekend pill-weekend-bordered">
               Long Weekend
             </span>
           )}

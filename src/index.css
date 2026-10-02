@@ -18,12 +18,10 @@
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgb(var(--neu-200) / 0.7);
 }
-
+/* Same tint in dark (the dark theme owns --glass) — only the border needs the
+   swap, since that theme's neu-200 is a light grey */
 .dark .glass-panel {
-  background: rgb(var(--glass-dark) / 0.78);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgb(var(--neu-700) / 0.6);
+  border-color: rgb(var(--neu-700) / 0.6);
 }
 
 /* Glass card subtle hover */
@@ -156,20 +154,32 @@ html {
 /* ==========================================================================
    THEME PALETTES (src/themes.js)
 
-   One theme = the complete look: accent ramp, neutral ramp, page tint and
-   display font. A theme is selected with a single `data-theme` attribute on
-   <html> (the default theme is also baked into index.html so the first paint
-   is correct before JS runs). `dark` is simply one of the themes — it
-   additionally puts the `dark` class on <html>, which is what the app's
-   `dark:` utilities key off. `:root` carries the neutral Light fallback.
+   One theme = a colour package: accent ramp, neutral ramp, page tint. A theme
+   is selected with a single `data-theme` attribute on <html> (the default
+   theme is also baked into index.html so the first paint is correct before JS
+   runs). `dark` is simply one of the themes — it additionally puts the `dark`
+   class on <html>, which is what the app's `dark:` utilities key off. `:root`
+   carries the neutral Light fallback.
+
+   The display font is a SEPARATE choice from src/themes.js FONTS: App.jsx
+   writes its stack straight into `--app-font` on <html>, so any font pairs
+   with any theme (the `:root` default below covers the pre-JS first paint).
 
      --acc-*  accent ramp  → Tailwind's `amber` scale
      --neu-*  neutral ramp → Tailwind's `stone` scale
 
+   Status pill colours live here too (`--weekend-*` for the Long Weekend pill,
+   `--civic-*` for the Civic/Optional pill) so they can shift per theme instead
+   of clashing with the accent. The default pair sits on `:root`/Light once;
+   only themes that need a different pair override it (Meadow weekend → violet,
+   Lagoon civic → rose, Dark its own dark-tinted pair).
+
    Values are space-separated RGB triples so every alpha variant keeps working
    (`bg-stone-200/80`, `dark:text-amber-400`, …). Light ramps deliberately run
    dark from 600 up so accent text sits at AA contrast on white surfaces, while
-   500 and below stay bright for soft fills and pills.
+   500 and below stay bright for soft fills and pills. Shared fallbacks
+   (`color-scheme`, default pills) live on `:root` — a theme block only ever
+   declares what it changes.
    ========================================================================== */
 :root,
 [data-theme='light'] {
@@ -199,11 +209,13 @@ html {
   --page: #faf8f5;
   --card: #ffffff;
   --glass: 255 255 255;
-  --app-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --weekend-bg: 209 250 229;
+  --weekend-fg: 4 120 87;
+  --civic-bg: 219 234 254;
+  --civic-fg: 29 78 216;
 }
 
 [data-theme='tangerine'] {
-  color-scheme: light;
   --acc-50: 255 243 237;
   --acc-100: 255 228 214;
   --acc-200: 255 201 176;
@@ -229,11 +241,9 @@ html {
   --page: #fff9f4;
   --card: #fffcf9;
   --glass: 255 252 248;
-  --app-font: 'Fredoka', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 [data-theme='meadow'] {
-  color-scheme: light;
   --acc-50: 240 253 244;
   --acc-100: 220 252 231;
   --acc-200: 187 247 208;
@@ -259,11 +269,13 @@ html {
   --page: #f6faf6;
   --card: #fbfdfb;
   --glass: 253 255 253;
-  --app-font: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* violet: a green Long Weekend pill would vanish into this theme's accent
+     (civic keeps the :root blue default) */
+  --weekend-bg: 237 233 254;
+  --weekend-fg: 109 40 217;
 }
 
 [data-theme='blossom'] {
-  color-scheme: light;
   --acc-50: 253 242 248;
   --acc-100: 252 231 243;
   --acc-200: 251 207 232;
@@ -289,11 +301,9 @@ html {
   --page: #fdf8f9;
   --card: #fffcfd;
   --glass: 255 251 252;
-  --app-font: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 [data-theme='lagoon'] {
-  color-scheme: light;
   --acc-50: 240 249 255;
   --acc-100: 224 242 254;
   --acc-200: 186 230 253;
@@ -319,7 +329,10 @@ html {
   --page: #f5f9fc;
   --card: #fbfdff;
   --glass: 252 254 255;
-  --app-font: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* rose: a blue Civic pill would disappear into this theme's accent
+     (weekend keeps the :root emerald default) */
+  --civic-bg: 255 228 230;
+  --civic-fg: 190 18 60;
 }
 
 [data-theme='dark'] {
@@ -349,20 +362,22 @@ html {
   --page: #1e1810;
   --card: #262016;
   --glass: 38 32 22;
-  --app-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-/* Dark surfaces — `dark` is the only theme that puts the `dark` class on
-   <html>, so this is the single dark surface set for the whole app. */
-.dark {
-  --page-dark: #1e1810;
-  --card-dark: #262016;
+  --weekend-bg: 2 44 34;
+  --weekend-fg: 110 231 183;
+  --civic-bg: 23 37 84;
+  --civic-fg: 147 197 253;
+  /* Inset surfaces inside cards (used by .dark .dark\:bg-inset and
+     .dark .calendar-grad) */
   --inset: #302920;
   --inset-2: #282117;
-  --glass-dark: 38 32 22;
 }
 
-/* Theme font follows the app everywhere (headings use .font-sans explicitly) */
+/* Display font (FONTS in src/themes.js) follows the app everywhere — headings
+   use .font-sans explicitly. `--app-font` is set per font by App.jsx on <html>;
+   the :root default (Fredoka, the DEFAULT_FONT_ID) is only for first paint. */
+:root {
+  --app-font: 'Fredoka', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 html,
 body,
 .font-sans {
@@ -371,21 +386,17 @@ body,
 
 /* ==========================================================================
    Semantic surfaces — themed replacements for the hardcoded hex classes.
-   Light values come from the `--page/--card/--glass` vars above; the dark
-   theme swaps in its own surfaces under `.dark`.
+   `dark` ⇔ the dark theme, whose block already owns dark `--page`/`--card`,
+   so plain `.bg-page`/`.bg-card` need no dark override. Only surfaces whose
+   tint genuinely differs light-vs-dark get a `.dark` rule (sheets prefer the
+   card surface when dark).
    ========================================================================== */
 .bg-page {
   background-color: var(--page);
 }
-.dark .bg-page {
-  background-color: var(--page-dark);
-}
 
 .bg-card {
   background-color: var(--card);
-}
-.dark .bg-card {
-  background-color: var(--card-dark);
 }
 
 /* Modal sheets: page tint in light, card surface in dark */
@@ -393,7 +404,7 @@ body,
   background-color: var(--page);
 }
 .dark .bg-sheet {
-  background-color: var(--card-dark);
+  background-color: var(--card);
 }
 
 /* Inset rows / calendar frames inside cards (was dark:bg-[#302920]) */
@@ -415,29 +426,28 @@ body,
 /* Signature gradient fill: active segmented tab, selected year pill,
    calendar holiday cells. The ramp vars are space-separated RGB triples, so
    they must be wrapped in rgb() here — a bare var() is not a valid color and
-   would silently drop the whole gradient (leaving white text on no fill).
+   would silently drop the whole gradient (leaving text on no fill).
 
-   Light themes run a deep accent ramp (600→700, which the light palettes keep
-   dark on purpose) so white text clears AA contrast while staying vivid; the
-   dark theme runs the bright ramp so near-black text stays readable.
-   Hover gently brightens. */
+   Light themes run the bright accent ramp (400→500) for a lighter, juicier
+   fill; the dark theme runs the deeper 600→700 so the fill doesn't glare
+   against its dark surfaces. White .text-on-accent text sits on top of both —
+   a deliberate pop-first choice (strict AA would demand near-black ink on the
+   bright ramps). Hover gently brightens. */
 .bg-accent-grad {
-  background-image: linear-gradient(135deg, rgb(var(--acc-600)), rgb(var(--acc-700)));
+  background-image: linear-gradient(135deg, rgb(var(--acc-400)), rgb(var(--acc-500)));
 }
 .dark .bg-accent-grad {
-  background-image: linear-gradient(135deg, rgb(var(--acc-400)), rgb(var(--acc-600)));
+  background-image: linear-gradient(135deg, rgb(var(--acc-600)), rgb(var(--acc-700)));
 }
 .bg-accent-grad:hover {
   filter: brightness(1.07);
 }
 
-/* Foreground that works on .bg-accent-grad in EVERY theme:
-   white on the deep light ramps, near-black on the bright dark ramp */
+/* Foreground on .bg-accent-grad — white in every theme (deliberate choice:
+   it pops on the bright accent fills even though near-black would score
+   higher on a strict contrast audit) */
 .text-on-accent {
   color: #ffffff;
-}
-.dark .text-on-accent {
-  color: #17130e;
 }
 
 /* Accent text (600 in light themes / 400 in the dark theme) — used for
@@ -455,4 +465,29 @@ body,
 }
 .hover\:bg-accent-soft:hover {
   background-color: rgb(var(--acc-500) / 0.18);
+}
+
+/* ==========================================================================
+   Status pill utilities — themed via --weekend-* / --civic-* so the Long
+   Weekend and Civic/Optional pills never clash with the theme's accent
+   (green pill on Meadow, blue pill on Lagoon). All pairs are AA-contrast on
+   their own tinted background; text variants are AA on plain card surfaces.
+   ========================================================================== */
+.pill-weekend {
+  background-color: rgb(var(--weekend-bg));
+  color: rgb(var(--weekend-fg));
+}
+/* Faint outline variant (hero status row) */
+.pill-weekend-bordered {
+  border: 1px solid rgb(var(--weekend-fg) / 0.35);
+}
+.pill-civic {
+  background-color: rgb(var(--civic-bg));
+  color: rgb(var(--civic-fg));
+}
+.text-weekend {
+  color: rgb(var(--weekend-fg));
+}
+.text-civic {
+  color: rgb(var(--civic-fg));
 }
