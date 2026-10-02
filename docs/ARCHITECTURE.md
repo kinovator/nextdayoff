@@ -13,13 +13,13 @@
 ```text
 nextdayoff/
 ├── public/
-│   ├── icons/                     # PWA icons (192x192, 512x512, SVG)
+│   ├── icons/                     # App logo + PWA icons; icon-512.png is canonical
 │   ├── notification-sw.js         # notificationclick + periodicsync (background reminders)
 │   ├── apple-touch-icon.png
 │   └── favicon.svg
 ├── src/
 │   ├── components/
-│   │   ├── Header.jsx             # App title, region + country badge, theme picker
+│   │   ├── Header.jsx             # App logo + title, region badge, theme picker
 │   │   ├── RegionSelector.jsx     # Country tabs + region picker with GPS detection
 │   │   ├── HeroCountdown.jsx      # Main real-time countdown clock + action bar
 │   │   ├── HolidayList.jsx        # Chronological list with year filters

@@ -25,9 +25,16 @@ export default function Header({
         {/* Brand — min-w-0 lets the title truncate on 320-360px phones
             instead of shoving the right-hand buttons off the screen */}
         <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-xl bg-amber-500/10 dark:bg-amber-400/15 border border-amber-500/20 dark:border-amber-400/25 flex items-center justify-center text-amber-600 dark:text-amber-400 shadow-sm">
-            <span className="text-base sm:text-lg select-none">⏳</span>
-          </div>
+          {/* App logo — the same art the PWA manifest and apple-touch-icon use
+              (public/icons/icon-512.png). Decorative: the wordmark next to it
+              already names the app. */}
+          <img
+            src="/icons/icon-512.png"
+            alt=""
+            width="512"
+            height="512"
+            className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-xl object-cover shadow-sm ring-1 ring-black/5"
+          />
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 min-w-0">
               <span className="font-extrabold text-[15px] sm:text-base tracking-tight text-stone-900 dark:text-stone-100 font-sans truncate">

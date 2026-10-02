@@ -36,7 +36,9 @@ export const REMINDER_SYNC_TAG = 'nextdayoff-reminders';
 /** Floor for background checks; Chrome schedules them at its own discretion. */
 export const BACKGROUND_SYNC_MIN_INTERVAL_MS = 12 * 60 * 60 * 1000;
 
-const REMINDER_ICON_PATH = '/icons/icon-192.png';
+// Canonical app logo (public/icons/icon-512.png) — the same art the service
+// worker shows when the background reminder fires while the app is closed.
+const REMINDER_ICON_PATH = '/icons/icon-512.png';
 
 function openReminderDb() {
   return new Promise((resolve, reject) => {
