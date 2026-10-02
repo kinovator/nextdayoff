@@ -53,7 +53,7 @@ The literal calendar date is stored in the optional `actualDate` field on shifte
 ## 4. Storage Schema (`localStorage`)
 The application state persistence layer relies on lightweight client-side storage keys (see `src/utils/storage.js`):
 - `stat_app_region`: Stores the user's selected region code string as a persistent fallback default.
-- `stat_app_theme`: Stores user UI theme preference (`dark` or `light`).
+- `stat_app_theme`: Stores the selected theme id (`tangerine` (default), `meadow`, `blossom`, `lagoon`, `light`, or `dark` — see `src/themes.js`). The theme carries its own light/dark colouring and display font.
 - `stat_app_include_optional`: Stores whether optional/civic holidays are included in lists (`'true'` / `'false'`).
 - `stat_app_reminders`: Stores whether holiday reminder notifications are opted into (`'true'` / `'false'`).
 - `stat_app_notified`: Store of holiday ids already reminded about (JSON array, newest first, capped at 25) so each holiday notifies once.

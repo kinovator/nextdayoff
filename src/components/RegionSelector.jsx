@@ -32,11 +32,11 @@ export default function RegionSelector({
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-stone-900/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="w-full max-w-lg bg-[#FAF8F5] dark:bg-[#18181B] rounded-t-3xl sm:rounded-2xl shadow-2xl border border-stone-200/90 dark:border-stone-800 flex flex-col max-h-[90vh] overflow-hidden animate-sheet-up"
+        className="w-full max-w-lg bg-sheet rounded-t-3xl sm:rounded-2xl shadow-2xl border border-stone-200/90 dark:border-stone-700 flex flex-col max-h-[90vh] overflow-hidden animate-sheet-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between">
+        <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
               <span>Select Your Jurisdiction</span>
@@ -47,7 +47,7 @@ export default function RegionSelector({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-200/60 dark:hover:bg-stone-800 transition"
+            className="p-1.5 rounded-full text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-200/60 dark:hover:bg-stone-700 transition"
             aria-label="Close region selector"
           >
             <X className="w-5 h-5" />
@@ -55,15 +55,15 @@ export default function RegionSelector({
         </div>
 
         {/* Country Tabs */}
-        <div className="flex gap-1.5 px-4 py-2.5 border-b border-stone-200/60 dark:border-stone-800/60">
+        <div className="flex gap-1.5 px-4 py-2.5 border-b border-stone-200/60 dark:border-stone-700/60">
           {COUNTRIES.map((c) => (
             <button
               key={c.code}
               onClick={() => setCountryFilter(c.code)}
               className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 ${
                 countryFilter === c.code
-                  ? 'bg-amber-500 text-white shadow-sm'
-                  : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700'
+                  ? 'bg-accent-grad text-on-accent shadow-sm'
+                  : 'bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-600'
               }`}
             >
               <span>{c.flag}</span> {c.name}
@@ -72,12 +72,12 @@ export default function RegionSelector({
         </div>
 
         {/* Action: Auto-Detect GPS / Location */}
-        <div className="px-4 py-3 bg-stone-100/70 dark:bg-stone-800/40 border-b border-stone-200/60 dark:border-stone-800/60 flex flex-col gap-2">
+        <div className="px-4 py-3 bg-stone-100/70 dark:bg-stone-700/40 border-b border-stone-200/60 dark:border-stone-700/60 flex flex-col gap-2">
           <button
             id="detect-location-btn"
             onClick={onAutoDetectLocation}
             disabled={isDetectingLocation}
-            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-amber-500 text-white hover:bg-amber-600 active:scale-[0.99] disabled:opacity-60 transition shadow-sm"
+            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-accent-grad text-on-accent active:scale-[0.99] disabled:opacity-60 transition shadow-sm"
           >
             <Navigation className={`w-4 h-4 ${isDetectingLocation ? 'animate-spin' : ''}`} />
             <span>
@@ -92,7 +92,7 @@ export default function RegionSelector({
         </div>
 
         {/* Search */}
-        <div className="p-3 border-b border-stone-200/60 dark:border-stone-800/60">
+        <div className="p-3 border-b border-stone-200/60 dark:border-stone-700/60">
           <div className="relative">
             <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
@@ -100,13 +100,13 @@ export default function RegionSelector({
               placeholder="Search region, state, or capital..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700/80 text-stone-800 dark:text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+              className="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-card dark:bg-inset border border-stone-200 dark:border-stone-600/80 text-stone-800 dark:text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
             />
           </div>
         </div>
 
         {/* Region List */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-1.5 divide-y divide-stone-100 dark:divide-stone-800/40">
+        <div className="flex-1 overflow-y-auto p-3 space-y-1.5 divide-y divide-stone-100 dark:divide-stone-700/40">
           {filteredRegions.map((prov) => {
             const isSelected = prov.code === selectedRegion;
             return (
@@ -119,7 +119,7 @@ export default function RegionSelector({
                 className={`w-full text-left p-3 rounded-xl transition flex items-center justify-between ${
                   isSelected
                     ? 'bg-amber-500/10 dark:bg-amber-400/15 border border-amber-500/30 dark:border-amber-400/30'
-                    : 'hover:bg-stone-100/80 dark:hover:bg-stone-800/50 border border-transparent'
+                    : 'hover:bg-stone-100/80 dark:hover:bg-stone-700/50 border border-transparent'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -129,7 +129,7 @@ export default function RegionSelector({
                       <span className="font-semibold text-sm text-stone-900 dark:text-stone-100">
                         {prov.name}
                       </span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded font-mono font-bold uppercase bg-stone-200/70 text-stone-700 dark:bg-stone-800 dark:text-stone-300">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded font-mono font-bold uppercase bg-stone-200/70 text-stone-700 dark:bg-stone-700 dark:text-stone-300">
                         {prov.code}
                       </span>
                     </div>
@@ -142,7 +142,7 @@ export default function RegionSelector({
                 </div>
 
                 {isSelected && (
-                  <div className="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-full bg-accent-grad text-on-accent flex items-center justify-center">
                     <Check className="w-3.5 h-3.5 stroke-[3]" />
                   </div>
                 )}
@@ -152,7 +152,7 @@ export default function RegionSelector({
         </div>
 
         {/* Footer: Optional holidays switch */}
-        <div className="p-4 bg-stone-100/90 dark:bg-stone-900/90 border-t border-stone-200 dark:border-stone-800 safe-pb">
+        <div className="p-4 bg-stone-100/90 dark:bg-stone-800/90 border-t border-stone-200 dark:border-stone-700 safe-pb">
           <label className="flex items-center justify-between cursor-pointer select-none">
             <div className="pr-3">
               <span className="text-xs font-semibold text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
@@ -166,7 +166,7 @@ export default function RegionSelector({
               type="checkbox"
               checked={includeOptional}
               onChange={(e) => onToggleIncludeOptional(e.target.checked)}
-              className="w-5 h-5 rounded text-amber-600 focus:ring-amber-500 border-stone-300 dark:border-stone-700 cursor-pointer accent-amber-500"
+              className="w-5 h-5 rounded text-amber-600 focus:ring-amber-500 border-stone-300 dark:border-stone-600 cursor-pointer accent-amber-500"
             />
           </label>
         </div>

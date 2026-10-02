@@ -51,9 +51,9 @@ export default function HolidayList({
   }
 
   return (
-    <section className="w-full rounded-3xl bg-white dark:bg-[#18181B] border border-stone-200/90 dark:border-stone-800 shadow-card dark:shadow-card-dark p-4 sm:p-6 transition-all">
+    <section className="w-full rounded-3xl bg-card border border-stone-200/90 dark:border-stone-700 shadow-card dark:shadow-card-dark p-4 sm:p-6 transition-all">
       {/* Top Header of the Upcoming Holidays view */}
-      <div className="pb-3 mb-3 border-b border-stone-100 dark:border-stone-800 space-y-2">
+      <div className="pb-3 mb-3 border-b border-stone-100 dark:border-stone-700 space-y-2">
         {/* Row 1: back + title */}
         <div className="flex items-center gap-2">
           <button
@@ -66,22 +66,22 @@ export default function HolidayList({
           </button>
           <h2 className="text-sm sm:text-base font-bold text-stone-900 dark:text-stone-100 flex items-center gap-1.5">
             <span>Upcoming Holidays</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 font-mono">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-400 font-mono">
               {filteredHolidays.length}
             </span>
           </h2>
         </div>
 
         {/* Row 2: Year Filter Pills — current year first, then next year, "All" last */}
-        <div className="flex items-center gap-1 bg-stone-100 dark:bg-stone-800/80 p-0.5 rounded-xl border border-stone-200/60 dark:border-stone-700/60">
+        <div className="flex items-center gap-1 bg-stone-100 dark:bg-stone-700/80 p-0.5 rounded-xl border border-stone-200/60 dark:border-stone-600/60">
           {availableYears.map((yr) => (
             <button
               key={yr}
               onClick={() => setFilterYear(yr)}
               className={`flex-1 px-2 py-1 rounded-lg text-xs font-semibold transition ${
                 effectiveYear === yr
-                  ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
-                  : 'text-stone-400 dark:text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
+                  ? 'bg-accent-grad text-on-accent shadow-xs'
+                  : 'text-stone-400 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
               }`}
             >
               {yr}
@@ -91,8 +91,8 @@ export default function HolidayList({
             onClick={() => setFilterYear('all')}
             className={`flex-1 px-2 py-1 rounded-lg text-xs font-semibold transition ${
               effectiveYear === 'all'
-                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
-                : 'text-stone-400 dark:text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
+                ? 'bg-accent-grad text-on-accent shadow-xs'
+                : 'text-stone-400 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
             }`}
           >
             All
@@ -103,7 +103,7 @@ export default function HolidayList({
       {/* Scrollable list — scrollbar gutter reserved so layout never shifts between year filters */}
       <div className="space-y-2 max-h-[62vh] overflow-y-auto [scrollbar-gutter:stable] pr-0.5">
         {filteredHolidays.length === 0 ? (
-          <div className="p-8 rounded-2xl bg-stone-50 dark:bg-stone-900/40 text-center text-xs text-stone-400 border border-dashed border-stone-200 dark:border-stone-800">
+          <div className="p-8 rounded-2xl bg-stone-50 dark:bg-stone-800/40 text-center text-xs text-stone-400 border border-dashed border-stone-200 dark:border-stone-700">
             No holidays found for this year.
           </div>
         ) : (
@@ -123,20 +123,20 @@ export default function HolidayList({
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && onSelectHoliday(holiday)}
-                className="group relative flex items-center justify-between p-3 rounded-2xl bg-stone-50/80 dark:bg-[#201E1B] border border-stone-200/80 dark:border-stone-800/80 shadow-xs hover:shadow-md hover:border-amber-500/40 dark:hover:border-amber-500/40 transition active:scale-[0.99] cursor-pointer"
+                className="group relative flex items-center justify-between p-3 rounded-2xl bg-stone-50/80 dark:bg-inset border border-stone-200/80 dark:border-stone-700/80 shadow-xs hover:shadow-md hover:border-amber-500/40 dark:hover:border-amber-500/40 transition active:scale-[0.99] cursor-pointer"
               >
                 <div className="flex items-center gap-3">
                   {/* Calendar Month/Day Block */}
                   <div
                     className={`w-11 h-11 rounded-xl flex flex-col items-center justify-center border shrink-0 ${
                       isToday
-                        ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
-                        : 'bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-stone-900 dark:text-stone-100'
+                        ? 'bg-accent-grad text-on-accent border-amber-600 shadow-xs'
+                        : 'bg-card dark:bg-stone-800 border-stone-200 dark:border-stone-700 text-stone-900 dark:text-stone-100'
                     }`}
                   >
                     <span
                       className={`text-[9px] font-bold uppercase tracking-wider ${
-                        isToday ? 'text-amber-100' : 'text-stone-400 dark:text-stone-500'
+                        isToday ? 'opacity-85' : 'text-stone-400 dark:text-stone-400'
                       }`}
                     >
                       {monthName}
@@ -180,7 +180,7 @@ export default function HolidayList({
                       className={`text-[9px] font-medium ${
                         isMandatory
                           ? 'text-amber-600 dark:text-amber-400'
-                          : 'text-stone-400 dark:text-stone-500'
+                          : 'text-stone-400 dark:text-stone-400'
                       }`}
                     >
                       {isMandatory ? 'Stat' : 'Optional'}

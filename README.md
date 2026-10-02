@@ -18,12 +18,12 @@
 - **Motivational Overlay:** A message-first overlay shown on first arrival (and re-openable from the countdown page) with the motivational message and days left — auto-closes, then triggers the celebration.
 - **Tiered Celebrations:** Time-remaining-based effects that escalate as the day off approaches — grand confetti on the day itself, fireworks at 1–3 days, rocket streaks at 4–5 days, and a gentle shimmer within a week — with a matching hero-card flash.
 - **Holiday Reminders:** Opt-in reminders a week and 48 hours before your next statutory day off, de-duplicated per holiday and milestone. Tapping the notification brings the installed app back to the front. On Android/Chromium the installed app also checks in the background (Periodic Background Sync), so reminders arrive with the app fully closed — no account, no server; other browsers check while the app is open, and the info panel states which applies.
-- **Aesthetics & Theme:** Clean, neutral palette with warm stone accents and dark/light mode toggle. Compliant with mobile hardware safe areas (`env(safe-area-inset-*)`).
+- **Aesthetics & Theme:** Six one-tap themes — Tangerine (default), Meadow, Blossom, Lagoon, Light and Dark. Each theme sets the accent ramp, neutral ramp, page surfaces and display font together, so switching is a visible change across the whole UI. Compliant with mobile hardware safe areas (`env(safe-area-inset-*)`).
 
 ## Tech Stack
 
 - **Framework:** React 19 + Vite 8
-- **Styling:** Tailwind CSS with Plus Jakarta Sans & JetBrains Mono typography
+- **Styling:** Tailwind CSS — themed accent + neutral ramps as CSS variables, with a per-theme display font (Plus Jakarta Sans by default) and JetBrains Mono for digits
 - **PWA:** `vite-plugin-pwa` + Workbox
 - **Icons:** `lucide-react`
 - **Celebration:** `canvas-confetti`

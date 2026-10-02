@@ -65,7 +65,7 @@ export default function InstallBanner() {
   }
 
   return (
-    <div className="w-full my-4 p-4 rounded-2xl bg-stone-900 text-white dark:bg-stone-800 border border-stone-800 dark:border-stone-700 shadow-lg relative overflow-hidden transition-all">
+    <div className="w-full my-4 p-4 rounded-2xl bg-stone-900 text-stone-100 dark:bg-stone-700 border border-stone-800 dark:border-stone-600 shadow-lg relative overflow-hidden transition-all">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
@@ -83,7 +83,7 @@ export default function InstallBanner() {
 
         <button
           onClick={handleDismiss}
-          className="text-stone-400 hover:text-white p-1 rounded-lg transition"
+          className="text-stone-400 hover:text-stone-100 p-1 rounded-lg transition"
           aria-label="Dismiss install banner"
         >
           <X className="w-4 h-4" />
@@ -91,7 +91,7 @@ export default function InstallBanner() {
       </div>
 
       {showIOSInstructions ? (
-        <div className="mt-3 p-3 bg-stone-800/80 dark:bg-stone-900/80 rounded-xl border border-stone-700/60 text-xs text-stone-300 space-y-1.5 animate-in fade-in">
+        <div className="mt-3 p-3 bg-stone-800/80 dark:bg-stone-800/80 rounded-xl border border-stone-700/60 text-xs text-stone-300 space-y-1.5 animate-in fade-in">
           <p className="font-semibold text-amber-400">To install on iPhone / iPad:</p>
           <div className="flex items-center gap-2">
             <Share className="w-4 h-4 text-amber-400" />
