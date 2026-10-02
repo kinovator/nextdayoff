@@ -47,7 +47,7 @@ export default function ReminderPrompt({
         <button
           onClick={onEnable}
           type="button"
-          className="mt-2 px-3 py-1.5 rounded-xl text-[11px] font-bold bg-amber-500 text-white hover:bg-amber-600 transition active:scale-95 shadow-xs"
+          className="mt-2 px-3 py-1.5 rounded-xl text-[11px] font-bold bg-accent-grad text-on-accent transition active:scale-95 shadow-xs"
         >
           Turn on reminders
         </button>
@@ -55,7 +55,7 @@ export default function ReminderPrompt({
       <button
         onClick={handleDismiss}
         type="button"
-        className="p-1 -mt-0.5 -mr-0.5 rounded-full text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-200/60 dark:hover:bg-stone-800 transition"
+        className="p-1 -mt-0.5 -mr-0.5 rounded-full text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-200/60 dark:hover:bg-stone-700 transition"
         aria-label="Dismiss reminder prompt"
         title="Not now"
       >

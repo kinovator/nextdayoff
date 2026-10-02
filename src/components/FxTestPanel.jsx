@@ -30,7 +30,7 @@ export default function FxTestPanel() {
   return (
     <div className="fixed bottom-3 left-3 z-50 print:hidden">
       {open && (
-        <div className="mb-2 w-64 rounded-2xl border border-stone-300 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 backdrop-blur shadow-lg p-3 space-y-2">
+        <div className="mb-2 w-64 rounded-2xl border border-stone-300 dark:border-stone-600 bg-card/95 dark:bg-stone-800/95 backdrop-blur shadow-lg p-3 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-stone-700 dark:text-stone-200">
               FX Test Panel
@@ -49,7 +49,7 @@ export default function FxTestPanel() {
               <button
                 key={tier.key}
                 onClick={() => play(tier)}
-                className="w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl text-left text-xs bg-stone-100 hover:bg-amber-100 dark:bg-stone-800 dark:hover:bg-amber-900/40 transition cursor-pointer"
+                className="w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl text-left text-xs bg-stone-100 hover:bg-amber-100 dark:bg-stone-700 dark:hover:bg-amber-900/40 transition cursor-pointer"
                 title={`Play effect for ${tier.hint}`}
               >
                 <span className="font-semibold text-stone-800 dark:text-stone-200">
@@ -62,7 +62,7 @@ export default function FxTestPanel() {
             ))}
           </div>
 
-          <p className="text-[10px] text-stone-400 dark:text-stone-500">
+          <p className="text-[10px] text-stone-400 dark:text-stone-400">
             Played tier: {lastPlayed ?? '—'}
           </p>
         </div>
@@ -70,7 +70,7 @@ export default function FxTestPanel() {
 
       <button
         onClick={() => setOpen((o) => !o)}
-        className="w-11 h-11 rounded-full flex items-center justify-center bg-stone-800 dark:bg-stone-100 text-white dark:text-stone-900 text-lg shadow-lg active:scale-95 transition cursor-pointer"
+        className="w-11 h-11 rounded-full flex items-center justify-center bg-stone-800 dark:bg-stone-100 text-stone-100 dark:text-stone-900 text-lg shadow-lg active:scale-95 transition cursor-pointer"
         title="Toggle FX test panel"
         aria-label="Toggle FX test panel"
       >

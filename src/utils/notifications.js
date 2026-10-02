@@ -55,7 +55,9 @@ export const REMINDER_COPY = {
   7: { days: '{days} days to go{where} — time to plan your time off. 🗓️' },
 };
 
-const ICON_PATH = '/icons/icon-192.png';
+// Canonical app logo (public/icons/icon-512.png), also used by the PWA
+// manifest, apple-touch-icon and the in-app header badge.
+const ICON_PATH = '/icons/icon-512.png';
 
 export function isNotificationSupported() {
   return typeof window !== 'undefined' && 'Notification' in window;

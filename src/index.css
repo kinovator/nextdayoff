@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color-scheme: light dark;
-}
-
 /* Safe Area Inset Support for Mobile Hardware (iOS Home Bar / Notch) */
 .safe-pb {
   padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
@@ -15,19 +11,19 @@
   padding-top: max(1rem, env(safe-area-inset-top));
 }
 
-/* Smooth glassmorphic effect */
+/* Smooth glassmorphic effect — tint follows the active theme */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgb(var(--glass) / 0.78);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  border: 1px solid rgb(var(--neu-200) / 0.7);
 }
 
 .dark .glass-panel {
-  background: rgba(24, 24, 27, 0.75);
+  background: rgb(var(--glass-dark) / 0.78);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgb(var(--neu-700) / 0.6);
 }
 
 /* Glass card subtle hover */
@@ -92,10 +88,10 @@ html {
 
 @keyframes pulseGlow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    box-shadow: 0 0 20px rgb(var(--acc-500) / 0.2);
   }
   50% {
-    box-shadow: 0 0 35px rgba(245, 158, 11, 0.45);
+    box-shadow: 0 0 35px rgb(var(--acc-500) / 0.45);
   }
 }
 
@@ -108,12 +104,12 @@ html {
    Uses inset shadows since the card clips overflow. */
 @keyframes celebrateFlash {
   0% {
-    box-shadow: inset 0 0 0 3px rgba(245, 158, 11, 0.8), inset 0 0 40px rgba(245, 158, 11, 0.35);
-    background-color: rgba(245, 158, 11, 0.12);
+    box-shadow: inset 0 0 0 3px rgb(var(--acc-500) / 0.8), inset 0 0 40px rgb(var(--acc-500) / 0.35);
+    background-color: rgb(var(--acc-500) / 0.12);
   }
   100% {
-    box-shadow: inset 0 0 0 0 rgba(245, 158, 11, 0);
-    background-color: rgba(245, 158, 11, 0);
+    box-shadow: inset 0 0 0 0 rgb(var(--acc-500) / 0);
+    background-color: rgb(var(--acc-500) / 0);
   }
 }
 
@@ -155,4 +151,308 @@ html {
 /* Number ticker font smoothing */
 .tabular-numbers {
   font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   THEME PALETTES (src/themes.js)
+
+   One theme = the complete look: accent ramp, neutral ramp, page tint and
+   display font. A theme is selected with a single `data-theme` attribute on
+   <html> (the default theme is also baked into index.html so the first paint
+   is correct before JS runs). `dark` is simply one of the themes — it
+   additionally puts the `dark` class on <html>, which is what the app's
+   `dark:` utilities key off. `:root` carries the neutral Light fallback.
+
+     --acc-*  accent ramp  → Tailwind's `amber` scale
+     --neu-*  neutral ramp → Tailwind's `stone` scale
+
+   Values are space-separated RGB triples so every alpha variant keeps working
+   (`bg-stone-200/80`, `dark:text-amber-400`, …). Light ramps deliberately run
+   dark from 600 up so accent text sits at AA contrast on white surfaces, while
+   500 and below stay bright for soft fills and pills.
+   ========================================================================== */
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+  --acc-50: 255 251 235;
+  --acc-100: 254 243 199;
+  --acc-200: 253 230 138;
+  --acc-300: 252 211 77;
+  --acc-400: 251 191 36;
+  --acc-500: 245 158 11;
+  --acc-600: 180 83 9;
+  --acc-700: 146 64 14;
+  --acc-800: 120 53 15;
+  --acc-900: 69 26 3;
+  --acc-950: 46 16 2;
+  --neu-50: 250 250 249;
+  --neu-100: 245 244 242;
+  --neu-200: 232 229 225;
+  --neu-300: 214 210 204;
+  --neu-400: 143 137 129;
+  --neu-500: 105 99 92;
+  --neu-600: 82 76 70;
+  --neu-700: 64 59 54;
+  --neu-800: 41 36 32;
+  --neu-900: 28 25 22;
+  --neu-950: 13 11 9;
+  --page: #faf8f5;
+  --card: #ffffff;
+  --glass: 255 255 255;
+  --app-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+[data-theme='tangerine'] {
+  color-scheme: light;
+  --acc-50: 255 243 237;
+  --acc-100: 255 228 214;
+  --acc-200: 255 201 176;
+  --acc-300: 255 169 134;
+  --acc-400: 255 134 87;
+  --acc-500: 255 107 53;
+  --acc-600: 194 60 12;
+  --acc-700: 156 49 14;
+  --acc-800: 125 42 15;
+  --acc-900: 68 20 6;
+  --acc-950: 45 13 4;
+  --neu-50: 253 248 244;
+  --neu-100: 249 240 233;
+  --neu-200: 240 225 213;
+  --neu-300: 224 203 185;
+  --neu-400: 146 124 105;
+  --neu-500: 122 100 82;
+  --neu-600: 96 76 61;
+  --neu-700: 74 59 47;
+  --neu-800: 48 38 31;
+  --neu-900: 34 26 21;
+  --neu-950: 17 13 10;
+  --page: #fff9f4;
+  --card: #fffcf9;
+  --glass: 255 252 248;
+  --app-font: 'Fredoka', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+[data-theme='meadow'] {
+  color-scheme: light;
+  --acc-50: 240 253 244;
+  --acc-100: 220 252 231;
+  --acc-200: 187 247 208;
+  --acc-300: 134 239 172;
+  --acc-400: 74 222 128;
+  --acc-500: 34 197 94;
+  --acc-600: 21 128 61;
+  --acc-700: 22 101 52;
+  --acc-800: 20 83 45;
+  --acc-900: 5 46 22;
+  --acc-950: 3 30 14;
+  --neu-50: 246 250 245;
+  --neu-100: 237 244 236;
+  --neu-200: 220 232 218;
+  --neu-300: 194 212 192;
+  --neu-400: 118 140 116;
+  --neu-500: 95 116 93;
+  --neu-600: 72 91 70;
+  --neu-700: 55 71 54;
+  --neu-800: 37 47 36;
+  --neu-900: 26 33 25;
+  --neu-950: 13 17 12;
+  --page: #f6faf6;
+  --card: #fbfdfb;
+  --glass: 253 255 253;
+  --app-font: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+[data-theme='blossom'] {
+  color-scheme: light;
+  --acc-50: 253 242 248;
+  --acc-100: 252 231 243;
+  --acc-200: 251 207 232;
+  --acc-300: 249 168 212;
+  --acc-400: 244 114 182;
+  --acc-500: 236 72 153;
+  --acc-600: 219 39 119;
+  --acc-700: 190 24 93;
+  --acc-800: 157 23 77;
+  --acc-900: 131 24 67;
+  --acc-950: 80 7 36;
+  --neu-50: 252 249 249;
+  --neu-100: 248 243 243;
+  --neu-200: 239 231 231;
+  --neu-300: 222 208 209;
+  --neu-400: 155 133 134;
+  --neu-500: 112 96 97;
+  --neu-600: 87 73 74;
+  --neu-700: 67 56 57;
+  --neu-800: 44 36 37;
+  --neu-900: 30 24 25;
+  --neu-950: 15 11 12;
+  --page: #fdf8f9;
+  --card: #fffcfd;
+  --glass: 255 251 252;
+  --app-font: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+[data-theme='lagoon'] {
+  color-scheme: light;
+  --acc-50: 240 249 255;
+  --acc-100: 224 242 254;
+  --acc-200: 186 230 253;
+  --acc-300: 125 211 252;
+  --acc-400: 56 189 248;
+  --acc-500: 14 165 233;
+  --acc-600: 3 105 161;
+  --acc-700: 7 89 133;
+  --acc-800: 12 74 110;
+  --acc-900: 8 47 73;
+  --acc-950: 5 30 46;
+  --neu-50: 245 249 252;
+  --neu-100: 236 242 247;
+  --neu-200: 218 229 238;
+  --neu-300: 191 208 222;
+  --neu-400: 116 136 152;
+  --neu-500: 101 122 140;
+  --neu-600: 72 90 106;
+  --neu-700: 55 70 81;
+  --neu-800: 34 45 53;
+  --neu-900: 24 31 37;
+  --neu-950: 11 16 19;
+  --page: #f5f9fc;
+  --card: #fbfdff;
+  --glass: 252 254 255;
+  --app-font: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --acc-50: 255 251 235;
+  --acc-100: 254 243 199;
+  --acc-200: 253 230 138;
+  --acc-300: 252 211 77;
+  --acc-400: 251 191 36;
+  --acc-500: 245 158 11;
+  --acc-600: 217 119 6;
+  --acc-700: 180 83 9;
+  --acc-800: 146 64 14;
+  --acc-900: 120 53 15;
+  --acc-950: 69 26 3;
+  --neu-50: 250 250 249;
+  --neu-100: 245 244 242;
+  --neu-200: 231 228 224;
+  --neu-300: 214 210 204;
+  --neu-400: 178 172 166;
+  --neu-500: 120 115 109;
+  --neu-600: 87 83 78;
+  --neu-700: 63 59 55;
+  --neu-800: 43 39 36;
+  --neu-900: 30 26 23;
+  --neu-950: 16 13 11;
+  --page: #1e1810;
+  --card: #262016;
+  --glass: 38 32 22;
+  --app-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Dark surfaces — `dark` is the only theme that puts the `dark` class on
+   <html>, so this is the single dark surface set for the whole app. */
+.dark {
+  --page-dark: #1e1810;
+  --card-dark: #262016;
+  --inset: #302920;
+  --inset-2: #282117;
+  --glass-dark: 38 32 22;
+}
+
+/* Theme font follows the app everywhere (headings use .font-sans explicitly) */
+html,
+body,
+.font-sans {
+  font-family: var(--app-font);
+}
+
+/* ==========================================================================
+   Semantic surfaces — themed replacements for the hardcoded hex classes.
+   Light values come from the `--page/--card/--glass` vars above; the dark
+   theme swaps in its own surfaces under `.dark`.
+   ========================================================================== */
+.bg-page {
+  background-color: var(--page);
+}
+.dark .bg-page {
+  background-color: var(--page-dark);
+}
+
+.bg-card {
+  background-color: var(--card);
+}
+.dark .bg-card {
+  background-color: var(--card-dark);
+}
+
+/* Modal sheets: page tint in light, card surface in dark */
+.bg-sheet {
+  background-color: var(--page);
+}
+.dark .bg-sheet {
+  background-color: var(--card-dark);
+}
+
+/* Inset rows / calendar frames inside cards (was dark:bg-[#302920]) */
+.dark .dark\:bg-inset {
+  background-color: var(--inset);
+}
+
+/* Calendar frame gradient inside cards (replaces dark:from/to-[#…]) */
+.dark .calendar-grad {
+  background: linear-gradient(to bottom, var(--inset), var(--inset-2));
+}
+
+/* ==========================================================================
+   Accent utilities — wholesale palette-aware styles for the app's main
+   colors (active pills, calendar holiday cells, section labels…). Each
+   theme restyles these through the --acc-* ramp.
+   ========================================================================== */
+
+/* Signature gradient fill: active segmented tab, selected year pill,
+   calendar holiday cells. The ramp vars are space-separated RGB triples, so
+   they must be wrapped in rgb() here — a bare var() is not a valid color and
+   would silently drop the whole gradient (leaving white text on no fill).
+
+   Light themes run a deep accent ramp (600→700, which the light palettes keep
+   dark on purpose) so white text clears AA contrast while staying vivid; the
+   dark theme runs the bright ramp so near-black text stays readable.
+   Hover gently brightens. */
+.bg-accent-grad {
+  background-image: linear-gradient(135deg, rgb(var(--acc-600)), rgb(var(--acc-700)));
+}
+.dark .bg-accent-grad {
+  background-image: linear-gradient(135deg, rgb(var(--acc-400)), rgb(var(--acc-600)));
+}
+.bg-accent-grad:hover {
+  filter: brightness(1.07);
+}
+
+/* Foreground that works on .bg-accent-grad in EVERY theme:
+   white on the deep light ramps, near-black on the bright dark ramp */
+.text-on-accent {
+  color: #ffffff;
+}
+.dark .text-on-accent {
+  color: #17130e;
+}
+
+/* Accent text (600 in light themes / 400 in the dark theme) — used for
+   primary accents, weekday headers and section labels alike */
+.text-accent {
+  color: rgb(var(--acc-600));
+}
+.dark .text-accent {
+  color: rgb(var(--acc-400));
+}
+
+/* Tinted accent wash for soft fills (badges, chips, empty states) */
+.bg-accent-soft {
+  background-color: rgb(var(--acc-500) / 0.12);
+}
+.hover\:bg-accent-soft:hover {
+  background-color: rgb(var(--acc-500) / 0.18);
 }

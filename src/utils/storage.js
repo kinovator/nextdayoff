@@ -1,9 +1,11 @@
 /**
  * Client-side persistence helpers adhering to docs/DATA_SCHEMA.md
  */
+import { DEFAULT_THEME_ID, isValidThemeId } from '../themes';
 
 export const STORAGE_KEYS = {
   REGION: 'stat_app_region',
+  // Theme id from src/themes.js ('light' | 'tangerine' | 'meadow' | … | 'dark')
   THEME: 'stat_app_theme',
   INCLUDE_OPTIONAL: 'stat_app_include_optional',
   REMINDERS: 'stat_app_reminders',
@@ -27,23 +29,28 @@ export function setStoredRegion(regionCode) {
   }
 }
 
+/**
+ * Active theme id (see src/themes.js) — the theme carries its own light/dark
+ * colouring plus font. Missing/stale values fall back to the system
+ * colour-scheme preference, then to the default theme.
+ */
 export function getStoredTheme() {
   try {
     const saved = localStorage.getItem(STORAGE_KEYS.THEME);
-    if (saved === 'dark' || saved === 'light') return saved;
+    if (isValidThemeId(saved)) return saved;
     // Fall back to system preference
     if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       return 'dark';
     }
-    return 'light';
+    return DEFAULT_THEME_ID;
   } catch {
-    return 'light';
+    return DEFAULT_THEME_ID;
   }
 }
 
-export function setStoredTheme(theme) {
+export function setStoredTheme(themeId) {
   try {
-    localStorage.setItem(STORAGE_KEYS.THEME, theme);
+    localStorage.setItem(STORAGE_KEYS.THEME, themeId);
   } catch (e) {
     console.warn('Could not persist theme preference', e);
   }

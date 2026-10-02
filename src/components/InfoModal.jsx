@@ -35,10 +35,10 @@ export default function InfoModal({
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-stone-900/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="w-full max-w-lg bg-[#FAF8F5] dark:bg-[#18181B] rounded-t-3xl sm:rounded-2xl shadow-2xl border border-stone-200/90 dark:border-stone-800 flex flex-col max-h-[90vh] overflow-hidden animate-sheet-up"
+        className="w-full max-w-lg bg-sheet rounded-t-3xl sm:rounded-2xl shadow-2xl border border-stone-200/90 dark:border-stone-700 flex flex-col max-h-[90vh] overflow-hidden animate-sheet-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between">
+        <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xl">🌍</span>
             <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100">
@@ -47,14 +47,14 @@ export default function InfoModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-200/60 dark:hover:bg-stone-800 transition"
+            className="p-1.5 rounded-full text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-200/60 dark:hover:bg-stone-700 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 text-xs sm:text-sm text-stone-700 dark:text-stone-300">
-          <section className="p-3.5 rounded-2xl bg-stone-100 dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 space-y-2">
+          <section className="p-3.5 rounded-2xl bg-stone-100 dark:bg-stone-800 border border-stone-200/80 dark:border-stone-700 space-y-2">
             <h4 className="font-semibold text-stone-900 dark:text-stone-100 text-xs uppercase tracking-wide">
               Good to Know
             </h4>
@@ -103,11 +103,11 @@ export default function InfoModal({
                 title={remindersEnabled ? 'Turn off holiday reminders' : 'Turn on holiday reminders'}
                 disabled={!canToggle}
                 className={`shrink-0 mt-0.5 w-11 h-6 rounded-full p-0.5 transition ${
-                  remindersEnabled ? 'bg-amber-500' : 'bg-stone-300 dark:bg-stone-700'
+                  remindersEnabled ? 'bg-amber-500' : 'bg-stone-300 dark:bg-stone-600'
                 } ${canToggle ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
               >
                 <span
-                  className={`block w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${
+                  className={`block w-5 h-5 rounded-full bg-card shadow-sm transition-transform ${
                     remindersEnabled ? 'translate-x-5' : 'translate-x-0'
                   }`}
                 />
@@ -125,10 +125,10 @@ export default function InfoModal({
           </section>
         </div>
 
-        <div className="p-4 bg-stone-100/90 dark:bg-stone-900/90 border-t border-stone-200 dark:border-stone-800 safe-pb flex justify-end">
+        <div className="p-4 bg-stone-100/90 dark:bg-stone-800/90 border-t border-stone-200 dark:border-stone-700 safe-pb flex justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl text-xs font-bold bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 transition"
+            className="px-5 py-2 rounded-xl text-xs font-bold bg-stone-900 text-stone-100 dark:bg-stone-100 dark:text-stone-900 transition"
           >
             Got it
           </button>

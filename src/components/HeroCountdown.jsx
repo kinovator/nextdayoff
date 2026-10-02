@@ -29,7 +29,7 @@ export default function HeroCountdown({
 
   if (!holiday) {
     return (
-      <div className="w-full p-8 rounded-3xl bg-white/70 dark:bg-stone-900/60 border border-stone-200/80 dark:border-stone-800 text-center shadow-card">
+      <div className="w-full p-8 rounded-3xl bg-card dark:bg-inset border border-stone-200/80 dark:border-stone-700 text-center shadow-card">
         <p className="text-stone-500 dark:text-stone-400 text-sm">
           No statutory holidays found for {region.name}.
         </p>
@@ -100,7 +100,7 @@ export default function HeroCountdown({
   };
 
   return (
-    <section className="w-full relative overflow-hidden rounded-3xl bg-white dark:bg-[#18181B] border border-stone-200/90 dark:border-stone-800 shadow-card dark:shadow-card-dark p-5 sm:p-7 flex flex-col items-center text-center transition-all">
+    <section className="w-full relative overflow-hidden rounded-3xl bg-card border border-stone-200/90 dark:border-stone-700 shadow-card dark:shadow-card-dark p-5 sm:p-7 flex flex-col items-center text-center transition-all">
       {/* Background subtle ambient warmth */}
       <div className="absolute -top-24 -right-24 w-64 h-64 bg-amber-500/10 dark:bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-stone-500/5 dark:bg-stone-400/5 rounded-full blur-3xl pointer-events-none" />
@@ -120,7 +120,7 @@ export default function HeroCountdown({
             className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase ${
               isMandatoryStat
                 ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/70 dark:text-amber-300 border border-amber-300/40 dark:border-amber-700/40'
-                : 'bg-stone-200/80 text-stone-700 dark:bg-stone-800 dark:text-stone-300'
+                : 'bg-stone-200/80 text-stone-700 dark:bg-stone-700 dark:text-stone-300'
             }`}
           >
             {isMandatoryStat ? 'Stat Holiday' : 'Optional / Civic'}
@@ -131,7 +131,7 @@ export default function HeroCountdown({
             </span>
           )}
         </div>
-        <span className="text-stone-400 dark:text-stone-500 text-[11px] font-medium">
+        <span className="text-stone-400 dark:text-stone-400 text-[11px] font-medium">
           {region.code} • {region.name}
         </span>
       </div>
@@ -140,14 +140,14 @@ export default function HeroCountdown({
       <div className="relative my-3 flex flex-col items-center">
         {/* Calendar Hanging Binder Rings */}
         <div className="flex justify-between w-48 sm:w-56 px-6 -mb-2 z-10">
-          <div className="w-4 h-6 rounded-full bg-stone-300 dark:bg-stone-700 border-2 border-stone-100 dark:border-stone-900 shadow-sm" />
-          <div className="w-4 h-6 rounded-full bg-stone-300 dark:bg-stone-700 border-2 border-stone-100 dark:border-stone-900 shadow-sm" />
+          <div className="w-4 h-6 rounded-full bg-stone-300 dark:bg-stone-600 border-2 border-stone-100 dark:border-stone-800 shadow-sm" />
+          <div className="w-4 h-6 rounded-full bg-stone-300 dark:bg-stone-600 border-2 border-stone-100 dark:border-stone-800 shadow-sm" />
         </div>
 
         {/* Calendar Card Frame */}
-        <div className="w-64 sm:w-72 rounded-2xl bg-white dark:bg-[#201E1B] border-2 border-stone-200 dark:border-stone-700/80 shadow-xl overflow-hidden flex flex-col items-center">
+        <div className="w-64 sm:w-72 rounded-2xl bg-card dark:bg-inset border-2 border-stone-200 dark:border-stone-600/80 shadow-xl overflow-hidden flex flex-col items-center">
           {/* Calendar Top Header Bar */}
-          <div className="w-full bg-amber-600 dark:bg-amber-700 text-amber-50 px-4 py-2.5 flex items-center justify-between border-b border-amber-700/50">
+          <div className="w-full bg-accent-grad text-on-accent px-4 py-2.5 flex items-center justify-between border-b border-amber-700/50">
             <span className="text-[11px] font-extrabold uppercase tracking-widest">
               NEXT DAY OFF
             </span>
@@ -157,14 +157,14 @@ export default function HeroCountdown({
           </div>
 
           {/* Calendar Center Sheet with Giant Number */}
-          <div className="w-full py-6 px-4 bg-gradient-to-b from-stone-50 to-white dark:from-[#201E1B] dark:to-[#1A1816] flex flex-col items-center justify-center">
+          <div className="w-full py-6 px-4 bg-gradient-to-b from-stone-50 to-white calendar-grad flex flex-col items-center justify-center">
             {countdown.isToday ? (
               <div className="py-2 flex flex-col items-center">
                 <span className="text-5xl select-none animate-bounce mb-1">🎉</span>
                 <span className="text-5xl sm:text-6xl font-black text-amber-600 dark:text-amber-400 font-sans tracking-tight">
                   TODAY!
                 </span>
-                <span className="text-xs font-bold uppercase tracking-widest text-stone-400 dark:text-stone-500 mt-1">
+                <span className="text-xs font-bold uppercase tracking-widest text-stone-400 dark:text-stone-400 mt-1">
                   Enjoy Your Holiday
                 </span>
               </div>
@@ -182,7 +182,7 @@ export default function HeroCountdown({
 
             {/* Remaining shifts — inside the calendar frame (consistent with the overlay) */}
             {!countdown.isToday && (
-              <div className="mt-3 text-[11px] text-stone-400 dark:text-stone-500 flex items-start gap-1">
+              <div className="mt-3 text-[11px] text-stone-400 dark:text-stone-400 flex items-start gap-1">
                 <Briefcase className="w-3 h-3 text-stone-400 mt-0.5 shrink-0" />
                 <div className="leading-snug">
                   <span>
@@ -197,7 +197,7 @@ export default function HeroCountdown({
           </div>
 
           {/* Calendar Bottom Perforated Edge Accent */}
-          <div className="w-full border-t border-dashed border-stone-200 dark:border-stone-700/60 py-1.5 bg-stone-50/80 dark:bg-stone-900/40 text-[10px] text-stone-400 dark:text-stone-500 tracking-wider uppercase font-semibold">
+          <div className="w-full border-t border-dashed border-stone-200 dark:border-stone-600/60 py-1.5 bg-stone-50/80 dark:bg-stone-800/40 text-[10px] text-stone-400 dark:text-stone-400 tracking-wider uppercase font-semibold">
             {weekday} • {holiday.date}
           </div>
         </div>
@@ -243,7 +243,7 @@ export default function HeroCountdown({
       {/* Exact wait — hidden on the day itself (nothing left to wait for) */}
       {!countdown.isToday && (
         <div className="flex justify-center my-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-100 dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 text-[11px] text-stone-500 dark:text-stone-400 tabular-numbers">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200/80 dark:border-stone-700 text-[11px] text-stone-500 dark:text-stone-400 tabular-numbers">
             <Clock className="w-3 h-3 text-stone-400 shrink-0" />
             <span>Exact wait:</span>
             <span className="font-semibold text-stone-700 dark:text-stone-300 font-mono">
@@ -254,10 +254,10 @@ export default function HeroCountdown({
       )}
 
       {/* Minimal Action Buttons Bar */}
-      <div className="w-full grid grid-cols-2 gap-2 pt-3 mt-3 border-t border-stone-100 dark:border-stone-800/80">
+      <div className="w-full grid grid-cols-2 gap-2 pt-3 mt-3 border-t border-stone-100 dark:border-stone-700/80">
         <button
           onClick={handleShare}
-          className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 hover:bg-stone-200/80 dark:hover:bg-stone-700 transition active:scale-95"
+          className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-700 text-stone-800 dark:text-stone-200 hover:bg-stone-200/80 dark:hover:bg-stone-600 transition active:scale-95"
           title="Share countdown"
         >
           <Share2 className="w-3.5 h-3.5 shrink-0" />
@@ -266,7 +266,7 @@ export default function HeroCountdown({
 
         <button
           onClick={() => onOpenDetailModal(holiday)}
-          className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 hover:bg-stone-200/80 dark:hover:bg-stone-700 transition active:scale-95"
+          className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-700 text-stone-800 dark:text-stone-200 hover:bg-stone-200/80 dark:hover:bg-stone-600 transition active:scale-95"
           title="Holiday details"
         >
           <Info className="w-3.5 h-3.5 shrink-0" />

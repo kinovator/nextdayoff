@@ -43,11 +43,11 @@ export default function HolidayDetailModal({
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-stone-900/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="w-full max-w-lg bg-[#FAF8F5] dark:bg-[#18181B] rounded-t-3xl sm:rounded-2xl shadow-2xl border border-stone-200/90 dark:border-stone-800 flex flex-col max-h-[90vh] overflow-hidden animate-sheet-up"
+        className="w-full max-w-lg bg-sheet rounded-t-3xl sm:rounded-2xl shadow-2xl border border-stone-200/90 dark:border-stone-700 flex flex-col max-h-[90vh] overflow-hidden animate-sheet-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-800 flex items-start justify-between">
+        <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-700 flex items-start justify-between">
           <div className="pr-4">
             <div className="flex items-center gap-2 mb-1">
               <span
@@ -56,7 +56,7 @@ export default function HolidayDetailModal({
                     ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/70 dark:text-amber-300'
                     : isOptionalHere
                     ? 'bg-blue-100 text-blue-900 dark:bg-blue-950/70 dark:text-blue-300'
-                    : 'bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-300'
+                    : 'bg-stone-200 text-stone-700 dark:bg-stone-700 dark:text-stone-300'
                 }`}
               >
                 {isMandatoryHere
@@ -87,7 +87,7 @@ export default function HolidayDetailModal({
 
             {/* Observed vs. actual date note (weekend-shifted holidays only) */}
             {actualDate && (
-              <div className="mt-2 flex items-start gap-1.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-100/80 dark:bg-stone-800/60 px-2.5 py-1.5 text-[11px] leading-snug text-stone-600 dark:text-stone-400">
+              <div className="mt-2 flex items-start gap-1.5 rounded-lg border border-stone-200 dark:border-stone-600 bg-stone-100/80 dark:bg-stone-700/60 px-2.5 py-1.5 text-[11px] leading-snug text-stone-600 dark:text-stone-400">
                 <Info className="w-3.5 h-3.5 mt-px shrink-0 text-amber-600 dark:text-amber-400" />
                 <span>
                   Actual date: <strong className="font-semibold text-stone-700 dark:text-stone-300">{formatWeekday(actualDate)}, {formatLongDate(actualDate)}</strong>
@@ -99,7 +99,7 @@ export default function HolidayDetailModal({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-200/60 dark:hover:bg-stone-800 transition"
+            className="p-1.5 rounded-full text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-200/60 dark:hover:bg-stone-700 transition"
             aria-label="Close holiday modal"
           >
             <X className="w-5 h-5" />
@@ -109,7 +109,7 @@ export default function HolidayDetailModal({
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
           {/* Description */}
-          <div className="p-3.5 rounded-xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 text-xs sm:text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
+          <div className="p-3.5 rounded-xl bg-card dark:bg-inset border border-stone-200/80 dark:border-stone-700 text-xs sm:text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
             {holiday.description || `General public holiday observed in ${currentCountry.name}.`}
           </div>
 
@@ -130,7 +130,7 @@ export default function HolidayDetailModal({
                     className={`p-2 rounded-xl border flex items-center justify-between text-xs ${
                       isCurrent
                         ? 'ring-2 ring-amber-500 border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20'
-                        : 'bg-white dark:bg-stone-900 border-stone-200/80 dark:border-stone-800'
+                        : 'bg-card dark:bg-inset border-stone-200/80 dark:border-stone-700'
                     }`}
                   >
                     <div className="flex items-center gap-1.5 truncate pr-1">
@@ -146,7 +146,7 @@ export default function HolidayDetailModal({
                           ? 'bg-amber-100 text-amber-900 dark:bg-amber-900/60 dark:text-amber-300'
                           : isOpt
                           ? 'bg-blue-100 text-blue-900 dark:bg-blue-900/60 dark:text-blue-300'
-                          : 'bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-500'
+                          : 'bg-stone-100 text-stone-400 dark:bg-stone-700 dark:text-stone-400'
                       }`}
                     >
                       {isStat ? 'Stat' : isOpt ? 'Civic' : 'No'}
@@ -159,10 +159,10 @@ export default function HolidayDetailModal({
         </div>
 
         {/* Actions Footer */}
-        <div className="p-4 bg-stone-100/90 dark:bg-stone-900/90 border-t border-stone-200 dark:border-stone-800 flex gap-2 safe-pb">
+        <div className="p-4 bg-stone-100/90 dark:bg-stone-800/90 border-t border-stone-200 dark:border-stone-700 flex gap-2 safe-pb">
           <button
             onClick={handleShare}
-            className="flex-1 py-2.5 px-4 rounded-xl text-xs font-semibold bg-amber-500 text-white hover:bg-amber-600 flex items-center justify-center gap-2 transition shadow-sm"
+            className="flex-1 py-2.5 px-4 rounded-xl text-xs font-semibold bg-accent-grad text-on-accent flex items-center justify-center gap-2 transition shadow-sm"
           >
             <Share2 className="w-3.5 h-3.5" />
             <span>Share Holiday</span>

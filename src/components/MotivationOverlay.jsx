@@ -80,7 +80,7 @@ export default function MotivationOverlay({ holiday, now, isOpen, onClose }) {
       aria-modal="true"
       aria-label="Motivational message"
     >
-      <div className="w-full max-w-sm bg-[#FAF8F5] dark:bg-[#18181B] rounded-3xl shadow-2xl border border-stone-200/90 dark:border-stone-800 overflow-hidden animate-pop-in select-none">
+      <div className="w-full max-w-sm bg-sheet rounded-3xl shadow-2xl border border-stone-200/90 dark:border-stone-700 overflow-hidden animate-pop-in select-none">
         {/* The motivational message — the star of this overlay, shown first */}
         <div className="mx-5 mt-5 p-5 rounded-3xl bg-amber-500/10 border border-amber-500/25 flex flex-col items-center gap-2.5 text-center">
           <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" />
@@ -93,14 +93,14 @@ export default function MotivationOverlay({ holiday, now, isOpen, onClose }) {
         <div className="relative mt-4 mb-3 px-5 flex flex-col items-center">
           {/* Calendar Hanging Binder Rings */}
           <div className="flex justify-between w-36 px-5 -mb-2 z-10">
-            <div className="w-3.5 h-5 rounded-full bg-stone-300 dark:bg-stone-700 border-2 border-stone-100 dark:border-stone-900 shadow-sm" />
-            <div className="w-3.5 h-5 rounded-full bg-stone-300 dark:bg-stone-700 border-2 border-stone-100 dark:border-stone-900 shadow-sm" />
+            <div className="w-3.5 h-5 rounded-full bg-stone-300 dark:bg-stone-600 border-2 border-stone-100 dark:border-stone-800 shadow-sm" />
+            <div className="w-3.5 h-5 rounded-full bg-stone-300 dark:bg-stone-600 border-2 border-stone-100 dark:border-stone-800 shadow-sm" />
           </div>
 
           {/* Calendar Card Frame (compact — the message above is the focus) */}
-          <div className="w-44 rounded-2xl bg-white dark:bg-[#201E1B] border-2 border-stone-200 dark:border-stone-700/80 shadow-md overflow-hidden flex flex-col items-center">
+          <div className="w-44 rounded-2xl bg-card dark:bg-inset border-2 border-stone-200 dark:border-stone-600/80 shadow-md overflow-hidden flex flex-col items-center">
             {/* Calendar Top Header Bar */}
-            <div className="w-full bg-amber-600 dark:bg-amber-700 text-amber-50 px-3 py-1.5 flex items-center justify-between border-b border-amber-700/50">
+            <div className="w-full bg-accent-grad text-on-accent px-3 py-1.5 flex items-center justify-between border-b border-amber-700/50">
               <span className="text-[9px] font-extrabold uppercase tracking-widest">
                 Next Day Off
               </span>
@@ -110,7 +110,7 @@ export default function MotivationOverlay({ holiday, now, isOpen, onClose }) {
             </div>
 
             {/* Calendar Center Sheet */}
-            <div className="w-full py-3 px-3 bg-gradient-to-b from-stone-50 to-white dark:from-[#201E1B] dark:to-[#1A1816] flex flex-col items-center justify-center">
+            <div className="w-full py-3 px-3 bg-gradient-to-b from-stone-50 to-white calendar-grad flex flex-col items-center justify-center">
               {isToday ? (
                 <div className="flex flex-col items-center">
                   <span className="text-2xl select-none mb-0.5">🎉</span>
@@ -132,7 +132,7 @@ export default function MotivationOverlay({ holiday, now, isOpen, onClose }) {
               {/* Working shifts remaining — below the days-left count */}
               {!isToday && (
                 <div className="mt-2 flex items-start gap-1 text-[9px] text-stone-500 dark:text-stone-400 text-center leading-snug">
-                  <Briefcase className="w-2.5 h-2.5 text-stone-400 dark:text-stone-500 shrink-0 mt-px" />
+                  <Briefcase className="w-2.5 h-2.5 text-stone-400 dark:text-stone-400 shrink-0 mt-px" />
                   <div className="leading-snug">
                     <span>
                       <strong className="text-stone-700 dark:text-stone-300">{workStats.workDays}</strong>{' '}
@@ -147,17 +147,17 @@ export default function MotivationOverlay({ holiday, now, isOpen, onClose }) {
             </div>
 
             {/* Calendar Bottom Perforated Edge Accent */}
-            <div className="w-full border-t border-dashed border-stone-200 dark:border-stone-700/60 py-1 bg-stone-50/80 dark:bg-stone-900/40 text-[9px] text-stone-400 dark:text-stone-500 tracking-wider uppercase font-semibold text-center">
+            <div className="w-full border-t border-dashed border-stone-200 dark:border-stone-600/60 py-1 bg-stone-50/80 dark:bg-stone-800/40 text-[9px] text-stone-400 dark:text-stone-400 tracking-wider uppercase font-semibold text-center">
               {weekday} • {holiday.date}
             </div>
           </div>
         </div>
 
         {/* Tap hint + auto-close progress bar */}
-        <p className="text-center text-[10px] text-stone-400 dark:text-stone-500 pb-2.5">
+        <p className="text-center text-[10px] text-stone-400 dark:text-stone-400 pb-2.5">
           Tap anywhere to continue
         </p>
-        <div className="h-1 w-full bg-stone-200 dark:bg-stone-800">
+        <div className="h-1 w-full bg-stone-200 dark:bg-stone-700">
           <div className="h-full bg-amber-500 animate-overlay-progress" />
         </div>
       </div>

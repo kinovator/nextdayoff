@@ -10,6 +10,7 @@ import InfoModal from './components/InfoModal';
 import MotivationOverlay from './components/MotivationOverlay';
 import ReminderPrompt from './components/ReminderPrompt';
 import FxTestPanel from './components/FxTestPanel';
+import ThemePickerModal from './components/ThemePickerModal';
 import { TAB_META, TAB_ORDER, getNextTab } from './tabs';
 
 import { REGIONS, getRegionByCode, DEFAULT_REGION_CODE } from './data/regions';
@@ -44,7 +45,10 @@ const FX_TEST_PANEL = false;
 
 export default function App() {
   const [selectedRegion, setSelectedRegion] = useState(() => getStoredRegion(DEFAULT_REGION_CODE));
-  const [theme, setTheme] = useState(() => getStoredTheme());
+  // Active theme (see src/themes.js) — a complete look (accent + neutral ramps,
+  // surfaces, font) applied via [data-theme] on <html>. The `dark` theme also
+  // sets the `dark` class that the app's `dark:` utilities key off.
+  const [themeId, setThemeId] = useState(() => getStoredTheme());
   const [includeOptional, setIncludeOptional] = useState(() => getStoredIncludeOptional());
   const [now, setNow] = useState(() => new Date());
 
@@ -53,6 +57,7 @@ export default function App() {
 
   const [isRegionModalOpen, setIsRegionModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isThemePickerOpen, setIsThemePickerOpen] = useState(false);
   const [selectedHolidayForModal, setSelectedHolidayForModal] = useState(null);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [locationFeedback, setLocationFeedback] = useState('');
@@ -101,15 +106,15 @@ export default function App() {
     touchStartY.current = null;
   };
 
-  // Synchronize dark mode class on <html>
+  // Apply the active theme: `data-theme` carries the ramps, page/surface tints
+  // and font; the `dark` class (set only by the dark theme) drives every
+  // `dark:` utility. Both live on <html> and are persisted here.
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    setStoredTheme(theme);
-  }, [theme]);
+    const root = document.documentElement;
+    root.dataset.theme = themeId;
+    root.classList.toggle('dark', themeId === 'dark');
+    setStoredTheme(themeId);
+  }, [themeId]);
 
   // Real-time second clock ticker
   useEffect(() => {
@@ -130,10 +135,6 @@ export default function App() {
       }
     }
   }, []);
-
-  const handleToggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
 
   const handleSelectRegion = (code) => {
     setSelectedRegion(code);
@@ -289,14 +290,13 @@ export default function App() {
   const regionCount = REGIONS.filter((r) => r.country === selectedCountry).length;
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#121110] text-stone-900 dark:text-stone-100 flex flex-col transition-colors duration-200 selection:bg-amber-200 dark:selection:bg-amber-900/60">
+    <div className="min-h-screen bg-page text-stone-900 dark:text-stone-100 flex flex-col transition-colors duration-200 selection:bg-amber-200 dark:selection:bg-amber-900/60">
       {/* 100% Persistent Top Header with Consistent App Title */}
       <Header
         selectedRegion={selectedRegion}
         onOpenRegionModal={() => setIsRegionModalOpen(true)}
-        theme={theme}
-        onToggleTheme={handleToggleTheme}
         onOpenInfoModal={() => setIsInfoModalOpen(true)}
+        onOpenThemePicker={() => setIsThemePickerOpen(true)}
         activeTab={activeTab}
         onToggleTab={() =>
           setActiveTab((prev) => getNextTab(prev).key)
@@ -333,8 +333,8 @@ export default function App() {
                     onClick={() => handleSelectRegion(code)}
                     className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition active:scale-95 ${
                       isActive
-                        ? 'bg-amber-500 text-white shadow-xs'
-                        : 'bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
+                        ? 'bg-accent-grad text-on-accent shadow-xs'
+                        : 'bg-card dark:bg-stone-800 border border-stone-200/80 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700'
                     }`}
                   >
                     <span>{p.flag} {code}</span>
@@ -354,14 +354,14 @@ export default function App() {
           {/* Segmented View Switcher & Swipe Dots */}
           <div className="flex items-center justify-between gap-2 mb-3 px-0.5">
             <div className="flex-1 min-w-0 overflow-x-auto scrollbar-none">
-              <div className="inline-flex p-0.5 bg-stone-200/70 dark:bg-stone-800/80 rounded-2xl border border-stone-300/40 dark:border-stone-700/50 text-xs">
+              <div className="inline-flex p-0.5 bg-stone-200/70 dark:bg-stone-700/80 rounded-2xl border border-stone-300/40 dark:border-stone-600/50 text-xs">
                 {TAB_META.map((tab) => (
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
                     className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
                       activeTab === tab.key
-                        ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
+                        ? 'bg-accent-grad text-on-accent shadow-xs'
                         : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
                     }`}
                   >
@@ -380,7 +380,7 @@ export default function App() {
                 className={`h-2 rounded-full cursor-pointer transition-all ${
                   activeTab === tab
                     ? 'bg-amber-500 w-4'
-                    : 'bg-stone-300 dark:bg-stone-700 w-2'
+                    : 'bg-stone-300 dark:bg-stone-600 w-2'
                 }`}
               />
             ))}
@@ -438,10 +438,23 @@ export default function App() {
         </div>
 
         {/* Minimal Footer */}
-        <footer className="mt-8 mb-4 pt-4 border-t border-stone-200/60 dark:border-stone-800/60 text-center text-xs text-stone-400 dark:text-stone-500 space-y-1">
+        <footer className="mt-8 mb-4 pt-4 border-t border-stone-200/60 dark:border-stone-700/60 text-center text-xs text-stone-400 dark:text-stone-400 space-y-1">
           <p className="flex items-center justify-center gap-1">
             <span>Built with precision for workers everywhere</span>
             <span>🌍</span>
+          </p>
+          <p>
+            made with{' '}
+            <span className="text-amber-500 dark:text-amber-400">❤️</span>{' '}
+            by{' '}
+            <a
+              href="https://github.com/kinovator"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 transition"
+            >
+              @kinovator
+            </a>
           </p>
         </footer>
 
@@ -486,6 +499,14 @@ export default function App() {
         notificationPermission={notificationPermission}
         backgroundReminders={backgroundReminderSync}
         onToggleReminders={handleToggleReminders}
+      />
+
+      {/* Color + font theme picker */}
+      <ThemePickerModal
+        isOpen={isThemePickerOpen}
+        onClose={() => setIsThemePickerOpen(false)}
+        selectedId={themeId}
+        onSelect={setThemeId}
       />
     </div>
   );
