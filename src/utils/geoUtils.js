@@ -1,5 +1,14 @@
 import { REGIONS } from '../data/regions';
 
+// Deprecated IANA aliases that devices may report under their modern name.
+const TIMEZONE_ALIASES = {
+  'America/Montreal': 'America/Toronto',
+};
+
+function canonicalTimezone(tz) {
+  return TIMEZONE_ALIASES[tz] || tz;
+}
+
 const TIMEZONE_TO_REGION = {
   'America/Vancouver': 'BC',
   'America/Dawson_Creek': 'BC',
@@ -76,28 +85,105 @@ export async function detectRegionFromGeolocation() {
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const { latitude, longitude } = position.coords;
-        let closestRegion = null;
-        let minDistance = Infinity;
 
-        // Compare against all regions with coordinates
-        for (const region of REGIONS) {
-          if (!region.latitude || !region.longitude) continue;
-          const dist = calculateDistance(latitude, longitude, region.latitude, region.longitude);
-          if (dist < minDistance) {
-            minDistance = dist;
-            closestRegion = region;
+        // Primary: point-in-polygon against real administrative boundaries.
+        // Handles border towns correctly (centroid math cannot) and is
+        // immune to wrong device timezone settings. Lazy-loaded so the
+        // boundary data never lands in the initial bundle.
+        try {
+          const { findRegionCodeAtPoint } = await import('../data/boundaries');
+          const boundaryCode = findRegionCodeAtPoint(longitude, latitude);
+          if (boundaryCode) {
+            const boundaryRegion = REGIONS.find((r) => r.code === boundaryCode);
+            resolve({
+              code: boundaryRegion.code,
+              name: boundaryRegion.name,
+              source: 'gps',
+              coords: { latitude, longitude },
+              distanceKm: 0,
+            });
+            return;
           }
+        } catch (e) {
+          console.debug('Boundary lookup failed, falling back to timezone pool', e);
         }
 
-        if (closestRegion) {
+        // Fallback: point outside every boundary (ocean, foreign country,
+        // mock coordinates, boundary simplification noise).
+        // Federal jurisdiction (FED) is not a place — never auto-select it.
+        const nonFederal = REGIONS.filter((r) => r.type !== 'federal');
+
+        // Candidate pool = regions associated with the device timezone.
+        // Provincial/state centroids sit far from their populations (BC's is
+        // in remote north-west), so raw nearest-centroid across every region
+        // crosses borders (Vancouver -> WA, Toronto -> FED). A timezone never
+        // straddles the CA/US border (BC = America/Vancouver, US Pacific =
+        // America/Los_Angeles), so within a pool the nearest centroid is
+        // reliable. Unknown timezone falls back to every non-federal region.
+        let tz = null;
+        try {
+          tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        } catch (e) {
+          // keep tz null, fall through to the global pool
+        }
+        const canonicalTz = tz ? canonicalTimezone(tz) : null;
+        const tzRegionCode = tz
+          ? TIMEZONE_TO_REGION[tz] || TIMEZONE_TO_REGION[canonicalTz]
+          : null;
+        let candidates = canonicalTz
+          ? nonFederal.filter(
+              (r) =>
+                r.code === tzRegionCode || canonicalTimezone(r.timezone) === canonicalTz
+            )
+          : [];
+        if (candidates.length === 0) {
+          candidates = nonFederal;
+        }
+
+        const nearestIn = (list) => {
+          let best = null;
+          let bestDist = Infinity;
+          for (const region of list) {
+            if (!region.latitude || !region.longitude) continue;
+            const dist = calculateDistance(
+              latitude,
+              longitude,
+              region.latitude,
+              region.longitude
+            );
+            if (dist < bestDist) {
+              bestDist = dist;
+              best = region;
+            }
+          }
+          return { region: best, distance: bestDist };
+        };
+
+        const nearestInPool = nearestIn(candidates);
+        // Prefer the region whose timezone string equals the device timezone
+        // exactly, unless another pool region is >25% closer. Keeps Ottawa on
+        // Ontario (device America/Toronto) while Montreal — same device zone
+        // via the deprecated America/Montreal alias — stays Quebec.
+        let chosen = nearestInPool.region;
+        let chosenDistance = nearestInPool.distance;
+        const exactTzMatch = nearestIn(candidates.filter((r) => r.timezone === tz));
+        if (
+          exactTzMatch.region &&
+          exactTzMatch.distance <= nearestInPool.distance * 1.25
+        ) {
+          chosen = exactTzMatch.region;
+          chosenDistance = exactTzMatch.distance;
+        }
+
+        if (chosen) {
           resolve({
-            code: closestRegion.code,
-            name: closestRegion.name,
+            code: chosen.code,
+            name: chosen.name,
             source: 'gps',
             coords: { latitude, longitude },
-            distanceKm: Math.round(minDistance),
+            distanceKm: Math.round(chosenDistance),
           });
         } else {
           reject(new Error('Could not match coordinates to a supported region.'));

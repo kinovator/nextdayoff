@@ -66,6 +66,8 @@ Do not begin implementation on these tasks until user explicitly request impleme
 
 - [ ] **Support for more countries and regions:** 
   - After having support for Canada and US holidays, expand to support more countries like UK, and EU.
+- [ ] **Higher-precision GPS boundaries (known misses):** 
+  - Region auto-detection uses point-in-polygon against `src/data/boundaries.js` (geoBoundaries, simplified to 3% / 0.001 deg). Two known misses at the 49th-parallel coast: **Point Roberts WA** and **Tsawwassen BC** resolve to `null` (simplified coastline falls just short of the border) and fall through to the timezone/centroid fallback, which currently still picks the right region. Fix later by raising mapshaper precision for the BC/WA border strip (or regenerating at higher resolution) — watch the lazy chunk size (currently ~131 KB gzip) when doing so.
 - [ ] **Multi-Country Pinning:** 
   - Enable users tracking multiple regions (e.g., remote workers with colleagues in different countries) to pin and compare upcoming holiday timelines side-by-side.
 - [ ] **Custom User Holidays:** 
