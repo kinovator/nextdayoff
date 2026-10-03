@@ -101,6 +101,7 @@ function reminderBucket(hoursLeft, calendarDays) {
   if (calendarDays <= 0) return 'today';
   if (hoursLeft <= 12) return 'hours';
   if (calendarDays === 1) return 'tomorrow';
+  if (calendarDays >= 14) return 'twoWeeks';
   if (calendarDays >= 7) return 'week';
   return 'days';
 }
@@ -175,8 +176,12 @@ function pickDueReminder(plan, now) {
     const hoursLeft = hoursUntil(holiday.date, now);
     if (hoursLeft < 0) continue;
 
+    // Due-ness by calendar day (mirrors getDueMilestones): hours-based maths
+    // counts hours *left in the day* once midnight hits and would never fire
+    // the offset-0 (day itself) milestone.
+    const calendarDays = calendarDaysUntil(holiday.date, now);
     const due = offsets
-      .filter((offset) => hoursLeft <= offset * 24)
+      .filter((offset) => calendarDays <= offset)
       .filter((offset) => !isMilestoneSent(notified, holiday.id, offset))
       .sort((a, b) => a - b);
 
@@ -184,7 +189,6 @@ function pickDueReminder(plan, now) {
 
     const offsetDays = due[0];
     const table = (plan.copyByOffset && plan.copyByOffset[String(offsetDays)]) || {};
-    const calendarDays = calendarDaysUntil(holiday.date, now);
     const body = fillTemplate(table[reminderBucket(hoursLeft, calendarDays)] || table.days, {
       days: Math.max(calendarDays, 0),
       hours: Math.max(1, Math.round(hoursLeft)),

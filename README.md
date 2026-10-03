@@ -17,7 +17,7 @@
 - **Install Prompt:** Customized install instructions for both iOS (Safari) and Android / Chromium browsers.
 - **Motivational Overlay:** A message-first overlay shown on first arrival (and re-openable from the countdown page) with the motivational message and days left — auto-closes, then triggers the celebration.
 - **Tiered Celebrations:** Time-remaining-based effects that escalate as the day off approaches — grand confetti on the day itself, fireworks at 1–3 days, rocket streaks at 4–5 days, and a gentle shimmer within a week — with a matching hero-card flash.
-- **Holiday Reminders:** Opt-in reminders a week and 48 hours before your next statutory day off, de-duplicated per holiday and milestone. Tapping the notification brings the installed app back to the front. On Android/Chromium the installed app also checks in the background (Periodic Background Sync), so reminders arrive with the app fully closed — no account, no server; other browsers check while the app is open, and the info panel states which applies.
+- **Holiday Reminders:** Opt-in reminders at five milestones before your next statutory day off (two weeks, a week, 48 hours, 24 hours, and the day itself), de-duplicated per holiday and milestone. Tapping the notification brings the installed app back to the front. On Android/Chromium the installed app also checks in the background (Periodic Background Sync), so reminders arrive with the app fully closed — no account, no server; other browsers check while the app is open, and the info panel states which applies.
 - **Aesthetics & Theme:** Six one-tap colour themes — Tangerine (default), Meadow, Blossom, Lagoon, Light and Dark — each setting the accent ramp, neutral ramp and page surfaces, plus a font choice (Fredoka (default), Baloo 2, Grandstander, Nunito, Quicksand, Comfortaa, Poppins, Outfit, Plus Jakarta Sans) that is picked independently, so any font pairs with any theme. Compliant with mobile hardware safe areas (`env(safe-area-inset-*)`).
 
 ## Tech Stack
@@ -53,3 +53,4 @@ npm run dev:lan
 - [`docs/DATA_SCHEMA.md`](docs/DATA_SCHEMA.md) — country/region registry, holiday schema, and observance conventions
 - [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) — setup guidance and UX/mobile constraints
 - [`docs/ROADMAP.md`](docs/ROADMAP.md) — planned features and future phases
+- [`docs/SMART_NOTIFICATIONS.md`](docs/SMART_NOTIFICATIONS.md) — reminder delivery ladder, push steps, and platform cost notes

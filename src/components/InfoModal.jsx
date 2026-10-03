@@ -74,7 +74,7 @@ export default function InfoModal({
                   <span>Holiday Reminders</span>
                 </h4>
                 <p className="text-[11px] text-stone-600 dark:text-stone-400 leading-normal mt-1">
-                  Notifications {scheduleLabel} before your next statutory day off, so there is
+                  Notifications go out {scheduleLabel} for your next statutory day off, so there is
                   time to plan the time off.
                 </p>
                 {remindersEnabled && (

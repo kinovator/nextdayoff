@@ -41,7 +41,7 @@ export default function ReminderPrompt({
           Never miss a day off
         </p>
         <p className="text-[11px] text-stone-600 dark:text-stone-400 leading-snug mt-0.5">
-          Get a heads-up{lead} before every statutory holiday, so you can plan
+          Get a heads-up{lead} for every statutory holiday, so you can plan
           the time off.
         </p>
         <button
