@@ -2,7 +2,8 @@
  * Holiday reminder notifications.
  *
  * Reminders are scheduled client-side against the milestones in
- * `REMINDER_OFFSETS_DAYS` (a week before, then 48 hours before). While the app
+ * `REMINDER_OFFSETS_DAYS` (two weeks, a week, 48 hours, 24 hours and the day
+ * itself). While the app
  * is open it checks whether a milestone has come due and asks the service worker
  * to display a notification, de-duplicated per holiday *and* milestone.
  *
@@ -27,9 +28,10 @@ import {
 /**
  * Reminder milestones, in days before the holiday begins (descending). Add an
  * entry here (and optionally an override in `REMINDER_COPY`) to schedule
- * another heads-up.
+ * another heads-up. Offset 0 means the day itself and is due by calendar day,
+ * since the hours-based maths counts hours *left in the day* once midnight hits.
  */
-export const REMINDER_OFFSETS_DAYS = [7, 2];
+export const REMINDER_OFFSETS_DAYS = [14, 7, 2, 1, 0];
 
 /** How often to re-check while the app stays open. */
 export const REMINDER_CHECK_INTERVAL_MS = 15 * 60 * 1000;
@@ -42,6 +44,7 @@ export const BASE_REMINDER_COPY = {
   today: "It's today{where} — enjoy the day off! 🎉",
   hours: 'Starts in {hours} hour{plural}{where}. Nearly there!',
   tomorrow: 'Tomorrow{where} — one sleep to go!',
+  twoWeeks: 'Two weeks to go{where} — a good moment to plan your time off. 🗓️',
   week: 'One week to go{where} — a good moment to plan your time off. 🗓️',
   days: '{days} days to go{where}. Hang in there!',
 };
@@ -53,6 +56,9 @@ export const BASE_REMINDER_COPY = {
 export const REMINDER_COPY = {
   // The week-ahead nudge stays about planning even when it fires a day late.
   7: { days: '{days} days to go{where} — time to plan your time off. 🗓️' },
+  // A late two-week nudge (fired at 8–13 days) lands in the `week` bucket, so
+  // say the actual day count instead of "one week".
+  14: { week: '{days} days to go{where} — time to plan your time off. 🗓️' },
 };
 
 // Canonical app logo (public/icons/icon-512.png), also used by the PWA
@@ -115,6 +121,7 @@ export function getReminderBucket(hoursLeft, calendarDays) {
   if (calendarDays <= 0) return 'today';
   if (hoursLeft <= 12) return 'hours';
   if (calendarDays === 1) return 'tomorrow';
+  if (calendarDays >= 14) return 'twoWeeks';
   if (calendarDays >= 7) return 'week';
   return 'days';
 }
@@ -156,6 +163,12 @@ export function isMilestoneSent(notifiedKeys, holidayId, offsetDays) {
  * Milestones that have come due for this holiday and have not been sent yet,
  * most urgent first. A milestone stays due from its threshold until the holiday
  * begins, so a check that runs late still delivers (with accurate copy).
+ *
+ * Due-ness is decided by calendar day, not by hours: the two agree for every
+ * offset ≥ 1 (a milestone becomes due at local midnight of its threshold day),
+ * and calendar days are the only rule that works for offset 0, where the
+ * hours-based maths would count hours *left in the day* and never reach zero
+ * before the holiday passes.
  */
 export function getDueMilestones(
   holiday,
@@ -165,9 +178,10 @@ export function getDueMilestones(
   if (!holiday || !holiday.date) return [];
   const hoursLeft = getHoursUntilHoliday(holiday.date, now);
   if (hoursLeft < 0) return [];
+  const calendarDays = getCalendarDaysUntil(holiday.date, now);
 
   return offsetsDays
-    .filter((offset) => hoursLeft <= offset * 24)
+    .filter((offset) => calendarDays <= offset)
     .filter((offset) => !isMilestoneSent(notifiedKeys, holiday.id, offset))
     .sort((a, b) => a - b)
     .map((offset) => ({
@@ -177,16 +191,31 @@ export function getDueMilestones(
     }));
 }
 
-/** Human phrasing of the milestone list, e.g. "a week and 2 days". */
+/**
+ * Human phrasing of the milestone list for UI copy, e.g. "two weeks before, a
+ * week before, 2 days before — and on the day itself". Offset 0 gets its own
+ * preposition, since "0 days before" would read wrong.
+ */
 export function describeReminderOffsets(offsetsDays = REMINDER_OFFSETS_DAYS) {
-  const labels = offsetsDays.map((days) => {
-    if (days === 7) return 'a week';
-    if (days === 1) return 'a day';
-    return `${days} days`;
-  });
+  const labels = offsetsDays
+    .filter((days) => days > 0)
+    .map((days) => {
+      if (days === 14) return 'two weeks before';
+      if (days === 7) return 'a week before';
+      if (days === 1) return 'a day before';
+      return `${days} days before`;
+    });
 
-  if (labels.length <= 1) return labels[0] || '';
-  return `${labels.slice(0, -1).join(', ')} and ${labels[labels.length - 1]}`;
+  let phrase = '';
+  if (labels.length === 1) phrase = labels[0];
+  else if (labels.length > 1) {
+    phrase = `${labels.slice(0, -1).join(', ')} and ${labels[labels.length - 1]}`;
+  }
+
+  if (offsetsDays.includes(0)) {
+    phrase = phrase ? `${phrase} — and on the day itself` : 'on the day itself';
+  }
+  return phrase;
 }
 
 /**

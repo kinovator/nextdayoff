@@ -19,7 +19,7 @@ Instruct the coding agent to bootstrap the project using a high-performance mode
 - **Honest Capability Reporting:** Never promise a reminder the platform cannot deliver. `InfoModal` reports the delivery path actually in effect for the device, and periodic-sync registration failures are swallowed and downgraded, never surfaced as an error.
 
 ## Verifying Reminder Changes
-The repo has no test framework, so reminder changes are verified with throwaway harnesses outside the repo (this is how Step 1 of the roadmap was signed off):
+The repo has no test framework, so reminder changes are verified with throwaway harnesses outside the repo (this is how Step 1 of the reminder ladder in [`SMART_NOTIFICATIONS.md`](SMART_NOTIFICATIONS.md) was signed off):
 
 1. **Build wiring:** `npm run build`, then confirm `dist/sw.js` contains `importScripts("/notification-sw.js")` and that `dist/notification-sw.js` holds the `notificationclick` and `periodicsync` listeners (`grep -c periodicsync dist/notification-sw.js`).
 2. **Milestone/copy rules (Node):** bundle `src/utils/notifications.js` with esbuild (`npx esbuild <entry> --bundle --format=esm --platform=node`), stub `localStorage`, `Notification` and `navigator.serviceWorker.ready` (define them with `Object.defineProperty`, since Node 22+ exposes read-only globals), then drive `getDueMilestones()`, `buildReminder()` and `checkAndSendReminder()` against fixed dates. Cover: both milestones due at 40h out, only the week one at 6 days out, the 48h send marking both keys, no stale week-ahead ping afterwards, and a bare holiday id muting the holiday.

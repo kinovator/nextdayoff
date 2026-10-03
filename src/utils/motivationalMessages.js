@@ -12,6 +12,13 @@
  *
  * Boundaries come from getTierKey() in dateUtils.js, shared with the
  * celebration FX so both systems always bucket the same way.
+ *
+ * Wording rules:
+ * - No exact day counts — the hero card already shows the number. The
+ *   message is a vibe, not a readout.
+ * - Every message must be true for its WHOLE tier range: qualify any
+ *   period word so it never overstates ("a week or less" for 6-7 days,
+ *   "two weeks at most" for 8-14, "less than a month" for 15-31).
  */
 import { getTierKey } from './dateUtils';
 
@@ -23,40 +30,40 @@ const MOTIVATIONAL_MESSAGES = {
     "Happy holiday! Today belongs completely to you. 🥳",
   ],
   upTo3Days: [
-    "Just a couple more days to push through! The finish line is right there! 🏃💨",
+    "Just days away! The finish line is right there! 🏃💨",
     "Final stretch! The long break is practically here. 💪",
     "Almost there! Wrap up your tasks with a smile. ✨",
     "Hold tight! Only a few more sunrises until your day off. 🌅",
-    "3 days or less! Time to start making holiday plans! 🎈",
+    "No time at all stands between you and your day off! 🎈",
   ],
   upTo5Days: [
-    "5 days or less! The countdown is seriously on. ⏳",
-    "Under a week now! Keep your energy up, you're doing great! 🔥",
-    "Just a handful of days left! Power through the week. 💼✨",
+    "Under a week now! The countdown is seriously on. ⏳",
+    "Keep your energy up — you're doing great! 🔥",
+    "Just a handful of days left! Power through. 💼✨",
     "The countdown is ticking down fast. Hang in there! 🎯",
-    "A few more working days and freedom awaits! 🚀",
+    "Only a few days stand between you and freedom! 🚀",
   ],
   upToOneWeek: [
-    "A week more to go! Keep at it! 💪",
-    "One week countdown! Stay focused and finish strong. 🌟",
-    "Seven days until holiday bliss! You've got this. 🙌",
-    "Only a week separates you from a well-deserved break! ☕",
-    "One week to go! Take it one day at a time. 🌈",
+    "A week or less to go! Keep at it! 💪",
+    "One week at most — stay focused and finish strong. 🌟",
+    "Days away now! Holiday bliss is nearly within reach. 🙌",
+    "A week or less separates you from a well-deserved break! ☕",
+    "Just days from your break! Take it one day at a time. 🌈",
   ],
   upToTwoWeeks: [
-    "Two weeks to go! Stay consistent, pace yourself, and conquer the days. ⚡",
-    "Two weeks out! You're cruising through the schedule nicely. 🚴",
-    "Just a fortnight away! Keep chipping away at that to-do list. 📋✨",
-    "Half a month left! Consistency is the name of the game. 🎯",
-    "Two weeks until your next recharge! Stay motivated! 🔋",
+    "Two weeks at most! Stay consistent, pace yourself, and conquer the days. ⚡",
+    "A fortnight or fewer — you're cruising through the schedule nicely. 🚴",
+    "Keep chipping away — a fortnight or fewer remains. 📋✨",
+    "Not far now — your next day off is just a short stretch away! 🌤️",
+    "Stay motivated — your next recharge is closer than you think! 🔋",
   ],
   upToOneMonth: [
     "Less than a month of work left! Keep the momentum going! 🚀",
     "Under a month to go! Consistency is key! 🔑",
     "Less than a month until your break! Every productive day counts. 📈",
-    "Under 30 days away! Stay focused and keep your eyes on the prize! 🏆",
+    "Stay focused and keep your eyes on the prize! 🏆",
     "Less than a month remaining! Steady progress wins the race. 🐢💨",
-    "A few short weeks left! You're closer than you think. ⏳✨",
+    "A few short weeks left at most! You're closer than you think. ⏳✨",
   ],
   moreThanMonth: [
     "A bit of a stretch ahead, but every day closer counts! 🌄",

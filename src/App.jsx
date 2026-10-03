@@ -10,6 +10,7 @@ import InfoModal from './components/InfoModal';
 import MotivationOverlay from './components/MotivationOverlay';
 import ReminderPrompt from './components/ReminderPrompt';
 import FxTestPanel from './components/FxTestPanel';
+import NotificationTestPanel from './components/NotificationTestPanel';
 import ThemePickerModal from './components/ThemePickerModal';
 import { TAB_META, TAB_ORDER, getNextTab } from './tabs';
 import { getFontById } from './themes';
@@ -45,6 +46,8 @@ import { detectRegionFromGeolocation, detectRegionFromTimezone } from './utils/g
 
 // TEMP: set to false to hide the celebration FX test panel (🧪, bottom-left)
 const FX_TEST_PANEL = false;
+// TEMP: set to false to hide the notification test panel (🔔, bottom-right)
+const NOTIFICATION_TEST_PANEL = false;
 
 export default function App() {
   const [selectedRegion, setSelectedRegion] = useState(() => getStoredRegion(DEFAULT_REGION_CODE));
@@ -475,6 +478,11 @@ export default function App() {
 
         {/* TEMP: FX test panel — flip this flag to hide it again */}
         {FX_TEST_PANEL && <FxTestPanel />}
+
+        {/* TEMP: notification test panel — flip this flag to hide it again */}
+        {NOTIFICATION_TEST_PANEL && (
+          <NotificationTestPanel holiday={nextHoliday} region={getRegionByCode(selectedRegion)} />
+        )}
       </main>
 
       {/* First-arrival motivational overlay (auto-closes; celebration fires after) */}
